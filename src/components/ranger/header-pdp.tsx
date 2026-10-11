@@ -34,7 +34,7 @@ export function HeaderPdp({ tenant }: { tenant: Tenant }) {
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-[88px] max-w-[1440px] items-center gap-8 px-4 lg:px-[6%]">
+      <div className="flex h-[88px] items-center gap-8 px-4 sm:px-6 lg:px-10 2xl:px-14">
         <Logo tenant={tenant} className="[&_img]:h-9 sm:[&_img]:h-10" />
         <nav className="hidden flex-1 items-center justify-center gap-[clamp(1.5rem,4vw,4rem)] font-heading text-[17px] text-[#2e2e38] lg:flex">
           {MENUS.map((m) => (
@@ -52,7 +52,7 @@ export function HeaderPdp({ tenant }: { tenant: Tenant }) {
             </div>
           ))}
         </nav>
-        <Link href="/painel" className="ml-auto flex items-center gap-3 font-heading text-[15px] text-[#2e2e38] lg:ml-0">
+        <Link href="/torque" className="ml-auto flex items-center gap-3 font-heading text-[15px] text-[#2e2e38] lg:ml-0">
           <span className="grid size-8 place-items-center rounded-full bg-[#ececf2]">
             <User className="size-4" />
           </span>

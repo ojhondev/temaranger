@@ -32,7 +32,7 @@ export default async function Estoque({ searchParams }: { searchParams: Promise<
   return (
     <>
       <HeaderHome tenant={tenant} q={f.q} />
-      <main className="mx-auto grid max-w-[1440px] gap-6 px-4 pb-10 pt-4 lg:grid-cols-[400px_1fr] lg:gap-10 lg:px-[3%]">
+      <main className="grid gap-6 px-4 sm:px-6 pb-10 pt-4 lg:grid-cols-[400px_1fr] lg:gap-10 lg:px-10 2xl:px-14">
         <FiltersShell
           filters={f}
           brands={brands}

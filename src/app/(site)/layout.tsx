@@ -1,11 +1,15 @@
 import { Footer } from "@/components/ranger/footer";
 import { listStores } from "@/db/queries";
+import { settingsOf } from "@/lib/settings";
 import { getTenant } from "@/lib/tenant";
 
 export async function generateMetadata() {
   const t = await getTenant();
+  const st = settingsOf(t);
   return {
-    title: { default: `${t.name} | Carros seminovos`, template: `%s | ${t.name}` },
+    title: { default: st.seoTitle, template: `%s | ${t.name}` },
+    description: st.seoDescription,
+    openGraph: { siteName: t.name, images: t.logoUrl ? [t.logoUrl] : undefined },
   };
 }
 
@@ -17,7 +21,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <div className="flex min-h-dvh flex-col" style={{ "--primary": tenant.primaryColor } as React.CSSProperties}>
       <div className="flex-1">{children}</div>
-      <Footer tenant={tenant} stores={stores} />
+      <Footer tenant={tenant} stores={stores} settings={settingsOf(tenant)} />
     </div>
   );
 }

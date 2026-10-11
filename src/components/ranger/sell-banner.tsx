@@ -2,8 +2,18 @@ import { Check } from "lucide-react";
 
 import { CarImage } from "@/components/car-image";
 
-/** Faixa vermelha "venda seu usado". */
-export function SellBanner({ storeName, whatsapp }: { storeName: string; whatsapp: string | null }) {
+/** Faixa vermelha "venda seu usado" (textos editáveis no Torque > Site > Página inicial). */
+export function SellBanner({
+  whatsapp,
+  title,
+  subtitle,
+  cta,
+}: {
+  whatsapp: string | null;
+  title: string;
+  subtitle: string;
+  cta: string;
+}) {
   const href = whatsapp
     ? `https://wa.me/${whatsapp}?text=${encodeURIComponent("Olá! Quero vender meu carro.")}`
     : "/estoque";
@@ -15,10 +25,8 @@ export function SellBanner({ storeName, whatsapp }: { storeName: string; whatsap
       <div className="pointer-events-none absolute inset-y-0 right-6 hidden w-16 md:block border-x-[6px] border-white/80 sm:right-8" />
 
       <div className="relative grid items-center gap-6 px-6 py-8 md:px-24 md:grid-cols-[1fr_auto_1fr] md:py-0">
-        <p className="text-center font-heading text-xl font-medium leading-snug text-white/95 md:text-left md:text-2xl">
-          Milhões de pessoas
-          <br />
-          de olho no seu usado!
+        <p className="max-w-[16ch] text-balance text-center font-heading text-xl font-medium leading-snug text-white/95 md:text-left md:text-2xl">
+          {title}
         </p>
 
         {/* celular com o anúncio publicado */}
@@ -37,17 +45,14 @@ export function SellBanner({ storeName, whatsapp }: { storeName: string; whatsap
         </div>
 
         <div className="text-center md:text-left">
-          <p className="font-heading text-xl font-medium leading-snug text-white md:text-2xl">
-            Venda na {storeName}
-            <br />e dê a partida no novo.
-          </p>
+          <p className="max-w-[22ch] text-balance font-heading text-xl font-medium leading-snug text-white md:text-2xl">{subtitle}</p>
           <a
             href={href}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 inline-block rounded-md bg-[#2b2b33] px-5 py-3 text-base font-semibold text-white transition hover:bg-black"
           >
-            Vender veículo
+            {cta}
           </a>
         </div>
       </div>

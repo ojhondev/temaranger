@@ -13,7 +13,7 @@ export function HeaderHome({ tenant, q }: { tenant: Tenant; q?: string }) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-transparent bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center gap-4 px-4 lg:gap-6 lg:px-[5.5%]">
+      <div className="flex h-[72px] items-center gap-4 px-4 sm:px-6 lg:gap-6 lg:px-10 2xl:px-14">
         <Logo tenant={tenant} />
 
         <form
@@ -44,7 +44,7 @@ export function HeaderHome({ tenant, q }: { tenant: Tenant; q?: string }) {
           </Link>
           {tenant.whatsapp && (
             <a
-              href={`https://wa.me/${tenant.whatsapp}`}
+              href={`https://wa.me/${tenant.whatsapp}?text=${encodeURIComponent(tenant.settings?.whatsappMessage || "Olá! Vim pelo site.")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 hover:text-primary"
@@ -59,7 +59,7 @@ export function HeaderHome({ tenant, q }: { tenant: Tenant; q?: string }) {
 
         <div className="ml-auto flex items-center gap-2 xl:ml-0">
           <Link
-            href="/painel"
+            href="/torque"
             className="hidden h-11 items-center rounded-full border border-[#d6d6dc] px-8 text-[13px] font-semibold hover:bg-[#f7f7f9] sm:flex"
           >
             Entrar

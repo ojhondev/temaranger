@@ -30,11 +30,31 @@ Sem foto, o veículo aparece como ilustração SVG por carroceria (`src/componen
 
 - `src/app/(site)/`: storefront (home, `/estoque`, `/veiculo/[slug]`) + `actions.ts`
   (formulário da PDP e botões de WhatsApp/videochamada, todos geram lead)
-- `src/app/painel/`: painel do gestor (visão geral, estoque, leads, vendedores) + `actions.ts`
+- `src/app/torque/`: **Torque**, o painel admin da loja (nome do produto; a WebMotors chama o
+  dela de Cockpit). Layout segue as referências do Cockpit (menu escuro, cards crm./estoque.
+  com rosca, "Oportunidades de negócio"; CRM com fila comum e atividades do dia).
+  - `(app)/`: Início, CRM (painel, leads, criar lead), Estoque (lista, cadastro com fotos),
+    Marketplaces (assistente de 3 passos), Site (identidade, banners, página inicial,
+    contato/WhatsApp, lojas), Equipe, Conta. `entrar/`: login.
+  - `actions/`: server actions por módulo; toda ação chama `requireSession([...papéis])`.
+- `src/lib/auth.ts` + `password.ts`: login e-mail/senha (scrypt), sessão JWT em cookie
+  `torque_session` (`SESSION_SECRET`). Papéis: `master` (equipe SoftMotors, sem tenant, entra
+  em qualquer loja), `manager` (gestor), `seller` (vendedor: só os próprios leads, estoque
+  só leitura). `src/middleware.ts` só barra sem cookie; a checagem real é `getSession`.
+- `src/lib/settings.ts`: configurações editáveis da loja (`tenants.settings` jsonb) com
+  padrões do tema; `activeBanners` (tabela `banners`, cai nos padrões se vazia).
+- `src/lib/tour.ts` + `components/torque/tour.tsx`: tours guiados (driver.js, mesmo modelo
+  da Dattis): passos apontam para `data-tour="…"`, abrem sozinhos na 1ª visita de cada tela,
+  vistos ficam em `users.tours_seen`. Tela nova no Torque = acrescentar tour aqui.
 - `src/lib/tenant.ts`: resolve a concessionária pelo domínio ou `DEFAULT_TENANT`
 - `src/lib/leads.ts`: criação de lead + rodízio de vendedores
-- `src/lib/marketplaces.ts`: `MarketplaceAdapter` por portal (hoje simulados) + `syncVehicle`
-- `src/middleware.ts`: senha única do painel (`PAINEL_PASSWORD`, Basic Auth), provisória
+- `src/lib/marketplaces.ts`: `MarketplaceAdapter` por portal (hoje **simulados**), contas em
+  `marketplace_accounts` com regras ("todo o estoque"/faixa de preço); `applyAccountRules`
+  e `syncMany` sincronizam em lote (pré-carregam veículos/anúncios; não iterar 1 a 1).
+- Imagens: upload direto do navegador para o **Vercel Blob** (`/api/torque/upload`, store
+  público `temaranger-midia`, pasta `lojas/{tenantId}/…`).
+- Contas: `scripts/create-user.ts` (via env `TORQUE_EMAIL`/`TORQUE_PASSWORD`, nunca senha em
+  arquivo); `scripts/seed-torque.ts` cria banners e portais do tenant demo.
 
 ## Regras
 
@@ -73,3 +93,11 @@ Fluxo padrão ao concluir uma tarefa que altere código:
    tipo de projeto antes; ver `C:\Users\55149\dev.md` para o histórico).
 
 Migrations pendentes (`npm run db:migrate`) são aplicadas no banco de destino nesta etapa.
+
+## Regras do produto (decisões do fundador)
+
+- **Temas são full width**: conteúdo ocupa a tela toda (sem container centralizado).
+- O Torque precisa dar **liberdade total** à loja: tudo que aparece no site (banners, textos,
+  logo, cores, WhatsApp, lojas, seções da home) é editável lá, sem depender da SoftMotors.
+- **Marketplaces são o módulo primordial**: conectar um portal tem que caber em poucos
+  cliques (hoje: 3 passos no assistente).

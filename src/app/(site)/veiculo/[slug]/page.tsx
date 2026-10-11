@@ -10,6 +10,7 @@ import { VehicleCard } from "@/components/site/vehicle-card";
 import { BODY_LABEL } from "@/config/ranger";
 import { getPublicVehicle, listSimilar } from "@/db/queries";
 import { brl, km } from "@/lib/format";
+import { settingsOf } from "@/lib/settings";
 import { getTenant } from "@/lib/tenant";
 
 import { startWhatsapp } from "../../actions";
@@ -67,7 +68,7 @@ export default async function VehiclePage({ params, searchParams }: Props) {
       <HeaderPdp tenant={tenant} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <main className="mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)] gap-8 px-4 pb-10 lg:grid-cols-[minmax(0,1fr)_400px] lg:px-[5%]">
+      <main className="grid grid-cols-[minmax(0,1fr)] gap-8 px-4 sm:px-6 pb-10 lg:grid-cols-[minmax(0,1fr)_400px] lg:px-10 2xl:px-14">
         <div className="flex min-w-0 flex-col gap-5">
           <PdpGallery vehicle={v} />
 
@@ -181,7 +182,7 @@ export default async function VehiclePage({ params, searchParams }: Props) {
         </div>
 
         <aside id="contato" className="scroll-mt-24 lg:sticky lg:top-[104px] lg:mt-9 lg:self-start">
-          <PdpLeadCard vehicleId={v.id} price={v.price} storeName={tenant.name} sent={!!enviado} error={!!erro} />
+          <PdpLeadCard vehicleId={v.id} price={v.price} storeName={tenant.name} sent={!!enviado} error={!!erro} rate={settingsOf(tenant).financingRate} />
         </aside>
 
         {similar.length > 0 && (

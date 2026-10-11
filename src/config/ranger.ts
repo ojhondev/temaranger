@@ -75,3 +75,14 @@ export const HERO_BANNERS: HeroBanner[] = [
 export const FINANCING = { monthlyRate: 0.0179, terms: [24, 36, 48, 60], minDownPayment: 0.2 };
 
 export const fill = (s: string, loja: string) => s.replaceAll("{loja}", loja);
+
+/** Opcionais oferecidos como caixas de seleção no cadastro do veículo. */
+export const COMMON_OPTIONALS = [
+  "Airbag", "Alarme", "Ar quente", "Ar-condicionado", "Ar-condicionado digital", "Bancos em couro",
+  "Bluetooth", "Botão de ignição/Start button", "Câmera de ré", "Central multimídia",
+  "Chave inteligente/presencial", "Computador de bordo", "Controle automático de velocidade",
+  "Controle de tração", "Desembaçador traseiro", "Direção elétrica", "Encosto de cabeça traseiro",
+  "Faróis de LED", "Freio ABS", "GPS", "Limpador traseiro", "Retrovisores elétricos",
+  "Rodas de liga leve", "Sensor de estacionamento", "Teto solar", "Travas elétricas",
+  "Vidros elétricos", "Volante com regulagem de altura",
+];

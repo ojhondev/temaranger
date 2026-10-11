@@ -13,7 +13,10 @@ import {
 /** Todas as tabelas do produto vivem no schema `app` do Postgres. */
 export const app = pgSchema("app");
 
-export const userRole = app.enum("user_role", ["manager", "seller"]);
+/** master = equipe SoftMotors (acesso a todas as lojas); manager = dono/gestor; seller = vendedor. */
+export const userRole = app.enum("user_role", ["master", "manager", "seller"]);
+export const bannerPlacement = app.enum("banner_placement", ["hero", "promo"]);
+export const connectionStatus = app.enum("connection_status", ["connected", "disconnected"]);
 export const vehicleStatus = app.enum("vehicle_status", ["available", "reserved", "sold"]);
 export const marketplace = app.enum("marketplace", ["olx", "webmotors", "mercadolivre"]);
 export const listingStatus = app.enum("listing_status", ["published", "paused", "removed", "error"]);
@@ -45,8 +48,25 @@ export const tenants = app.table("tenants", {
   logoUrl: text(),
   primaryColor: text().notNull().default("#e3173e"),
   whatsapp: text(),
+  /** Tudo o que a loja edita no Torque sem depender da SoftMotors (textos, contatos, SEO…). */
+  settings: jsonb().$type<TenantSettings>().notNull().default({}),
   ...timestamps,
 });
+
+export type TenantSettings = {
+  phone?: string;
+  email?: string;
+  instagram?: string;
+  facebook?: string;
+  youtube?: string;
+  whatsappMessage?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  footerText?: string;
+  financingRate?: number;
+  sellBanner?: { title?: string; subtitle?: string; cta?: string };
+  sections?: Partial<Record<"models" | "financing" | "promos" | "sell" | "zeroKm" | "bodyTypes", boolean>>;
+};
 
 /** Loja (unidade) de uma concessionária. */
 export const stores = app.table(
@@ -70,13 +90,18 @@ export const users = app.table(
   "users",
   {
     id: serial().primaryKey(),
-    tenantId: integer()
-      .notNull()
-      .references(() => tenants.id),
+    /** Nulo só para o master (equipe SoftMotors). */
+    tenantId: integer().references(() => tenants.id),
     storeId: integer().references(() => stores.id),
     name: text().notNull(),
-    email: text(),
+    email: text().unique(),
+    /** scrypt; nulo = vendedor sem acesso ao Torque (só recebe leads). */
+    passwordHash: text(),
     phone: text(),
+    avatarUrl: text(),
+    /** Tours guiados já vistos neste usuário. */
+    toursSeen: jsonb().$type<string[]>().notNull().default([]),
+    lastLoginAt: timestamp({ withTimezone: true }),
     role: userRole().notNull().default("seller"),
     active: boolean().notNull().default(true),
     /** Usado pelo rodízio: recebe o próximo lead quem está há mais tempo sem receber. */
@@ -177,12 +202,57 @@ export const leads = app.table(
   (t) => [index().on(t.tenantId, t.createdAt), index().on(t.sellerId)],
 );
 
+/** Banners editáveis do site (topo da home e banners promocionais). */
+export const banners = app.table(
+  "banners",
+  {
+    id: serial().primaryKey(),
+    tenantId: integer()
+      .notNull()
+      .references(() => tenants.id),
+    placement: bannerPlacement().notNull().default("hero"),
+    heading: text(),
+    title: text().notNull(),
+    subtitle: text(),
+    ctaLabel: text(),
+    href: text(),
+    imageUrl: text(),
+    active: boolean().notNull().default(true),
+    position: integer().notNull().default(0),
+    ...timestamps,
+  },
+  (t) => [index().on(t.tenantId, t.placement)],
+);
+
+/** Conta da loja em cada marketplace (conectada pelo assistente do Torque). */
+export const marketplaceAccounts = app.table(
+  "marketplace_accounts",
+  {
+    id: serial().primaryKey(),
+    tenantId: integer()
+      .notNull()
+      .references(() => tenants.id),
+    marketplace: marketplace().notNull(),
+    status: connectionStatus().notNull().default("connected"),
+    accountName: text(),
+    /** Regras de publicação escolhidas no assistente. */
+    rules: jsonb().$type<{ scope: "all" | "manual"; minPrice?: number; maxPrice?: number }>().notNull().default({ scope: "all" }),
+    connectedAt: timestamp({ withTimezone: true }),
+    lastSyncAt: timestamp({ withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex().on(t.tenantId, t.marketplace)],
+);
+
 export type Tenant = typeof tenants.$inferSelect;
 export type Store = typeof stores.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type Vehicle = typeof vehicles.$inferSelect;
 export type Listing = typeof listings.$inferSelect;
 export type Lead = typeof leads.$inferSelect;
+export type Banner = typeof banners.$inferSelect;
+export type MarketplaceAccount = typeof marketplaceAccounts.$inferSelect;
+export type UserRole = (typeof userRole.enumValues)[number];
 export type Marketplace = (typeof marketplace.enumValues)[number];
 export type LeadChannel = (typeof leadChannel.enumValues)[number];
 export type LeadStatus = (typeof leadStatus.enumValues)[number];

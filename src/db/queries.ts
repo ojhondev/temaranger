@@ -182,8 +182,9 @@ export async function getAdminVehicle(tenantId: number, id: number) {
 
 export type LeadFilters = { status?: string; vendedor?: string; canal?: string };
 
-export async function listLeads(tenantId: number, f: LeadFilters = {}) {
+export async function listLeads(tenantId: number, f: LeadFilters = {}, onlySellerId?: number) {
   const where: (SQL | undefined)[] = [eq(leads.tenantId, tenantId)];
+  if (onlySellerId) where.push(eq(leads.sellerId, onlySellerId));
   if (f.status) where.push(sql`${leads.status} = ${f.status}`);
   if (f.canal) where.push(sql`${leads.channel} = ${f.canal}`);
   if (f.vendedor) where.push(eq(leads.sellerId, Number(f.vendedor)));

@@ -23,12 +23,14 @@ export function PdpLeadCard({
   storeName,
   sent,
   error,
+  rate = FINANCING.monthlyRate,
 }: {
   vehicleId: number;
   price: number;
   storeName: string;
   sent: boolean;
   error: boolean;
+  rate?: number;
 }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "Olá, tenho interesse no veículo. Por favor entre em contato." });
   const [showParcelas, setShowParcelas] = useState(false);
@@ -64,12 +66,12 @@ export function PdpLeadCard({
             {FINANCING.terms.map((n) => (
               <li key={n} className="flex justify-between">
                 <span>{n}x</span>
-                <span className="font-semibold">{brl(installment(price - down, FINANCING.monthlyRate, n))}</span>
+                <span className="font-semibold">{brl(installment(price - down, rate, n))}</span>
               </li>
             ))}
           </ul>
           <p className="mt-2 text-[11px] text-[#6b6b76]">
-            Simulação com taxa de {(FINANCING.monthlyRate * 100).toFixed(2).replace(".", ",")}% a.m., sujeita a análise de crédito.
+            Simulação com taxa de {(rate * 100).toFixed(2).replace(".", ",")}% a.m., sujeita a análise de crédito.
           </p>
         </div>
       )}
