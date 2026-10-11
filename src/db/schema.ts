@@ -25,6 +25,7 @@ export const leadChannel = app.enum("lead_channel", [
   "mercadolivre",
   "manual",
 ]);
+export const vehicleType = app.enum("vehicle_type", ["car", "moto"]);
 export const leadStatus = app.enum("lead_status", ["new", "in_progress", "won", "lost"]);
 
 const timestamps = {
@@ -41,7 +42,8 @@ export const tenants = app.table("tenants", {
   slug: text().notNull().unique(),
   name: text().notNull(),
   domain: text().unique(),
-  primaryColor: text().notNull().default("#dc2626"),
+  logoUrl: text(),
+  primaryColor: text().notNull().default("#e3173e"),
   whatsapp: text(),
   ...timestamps,
 });
@@ -99,7 +101,10 @@ export const vehicles = app.table(
     brand: text().notNull(),
     model: text().notNull(),
     version: text(),
+    type: vehicleType().notNull().default("car"),
+    /** Ano de fabricação. */
     year: integer().notNull(),
+    yearModel: integer(),
     km: integer().notNull().default(0),
     /** Valores em reais inteiros. */
     price: integer().notNull(),
@@ -110,6 +115,15 @@ export const vehicles = app.table(
     bodyType: text(),
     description: text(),
     photos: jsonb().$type<string[]>().notNull().default([]),
+    /** Itens/opcionais do veículo (Airbag, Freio ABS…). */
+    optionals: jsonb().$type<string[]>().notNull().default([]),
+    acceptsTrade: boolean().notNull().default(true),
+    factoryWarranty: boolean().notNull().default(false),
+    hasHistoryReport: boolean().notNull().default(false),
+    /** Destaque pago/curado: aparece primeiro e com selo "Destaque". */
+    featured: boolean().notNull().default(false),
+    /** Selo de campanha exibido no card (ex.: "Festival de carros"). */
+    tag: text(),
     status: vehicleStatus().notNull().default("available"),
     /** Data de entrada no estoque, base do "carro parado". */
     stockedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -154,6 +168,8 @@ export const leads = app.table(
     phone: text(),
     email: text(),
     message: text(),
+    /** Aceitou receber contatos da loja por e-mail/WhatsApp. */
+    marketingOptIn: boolean().notNull().default(false),
     channel: leadChannel().notNull(),
     status: leadStatus().notNull().default("new"),
     ...timestamps,
@@ -170,4 +186,5 @@ export type Lead = typeof leads.$inferSelect;
 export type Marketplace = (typeof marketplace.enumValues)[number];
 export type LeadChannel = (typeof leadChannel.enumValues)[number];
 export type LeadStatus = (typeof leadStatus.enumValues)[number];
+export type VehicleType = (typeof vehicleType.enumValues)[number];
 export type VehicleStatus = (typeof vehicleStatus.enumValues)[number];

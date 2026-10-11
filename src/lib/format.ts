@@ -53,3 +53,16 @@ export const VEHICLE_STATUS: Record<VehicleStatus, string> = {
   reserved: "Reservado",
   sold: "Vendido",
 };
+
+const timeFmt = new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" });
+const dayFmt = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", timeZone: "America/Sao_Paulo" });
+const dayKey = (d: Date) => d.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+
+/** "Hoje, 16:56" · "Ontem, 09:10" · "12 de out." */
+export function publishedAt(date: Date) {
+  const today = new Date();
+  const yesterday = new Date(today.getTime() - 86_400_000);
+  if (dayKey(date) === dayKey(today)) return `Hoje, ${timeFmt.format(date)}`;
+  if (dayKey(date) === dayKey(yesterday)) return `Ontem, ${timeFmt.format(date)}`;
+  return dayFmt.format(date);
+}

@@ -39,6 +39,7 @@ export async function createLead(input: {
   phone?: string | null;
   email?: string | null;
   message?: string | null;
+  marketingOptIn?: boolean;
 }) {
   let storeId: number | null = null;
   if (input.vehicleId) {

@@ -1,43 +1,52 @@
 import Link from "next/link";
-import { MapPin } from "lucide-react";
 
-import { CarImage } from "@/components/car-image";
+import { VehiclePhoto } from "@/components/car-image";
+import { FavoriteButton } from "@/components/ranger/favorite-button";
 import type { Store, Vehicle } from "@/db/schema";
-import { brl, km } from "@/lib/format";
+import { brl, publishedAt } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
-export function VehicleCard({ vehicle: v, store }: { vehicle: Vehicle; store: Store }) {
-  const belowFipe = v.fipePrice && v.price < v.fipePrice;
+/** Card de anúncio do tema Ranger (carrosséis da home e resultados da busca). */
+export function VehicleCard({
+  vehicle: v,
+  store,
+  className,
+}: {
+  vehicle: Vehicle;
+  store: Store;
+  className?: string;
+}) {
   return (
-    <Link
-      href={`/veiculo/${v.slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border bg-card transition hover:-translate-y-0.5 hover:shadow-lg"
-    >
-      <div className="relative">
-        <CarImage color={v.color} body={v.bodyType} />
+    <div className={cn("group relative flex flex-col", className)}>
+      <Link href={`/veiculo/${v.slug}`} className="relative block overflow-hidden rounded-lg">
+        <VehiclePhoto vehicle={v} className="transition duration-300 group-hover:scale-[1.03]" />
+        {v.featured && (
+          <span className="absolute left-2 top-2 rounded bg-ranger-purple px-1.5 py-1 text-[10px] font-bold leading-none text-white">
+            Destaque
+          </span>
+        )}
         {v.status === "reserved" && (
-          <span className="absolute left-3 top-3 rounded-md bg-amber-500 px-2 py-1 text-xs font-bold text-white">
+          <span className="absolute bottom-2 left-2 rounded bg-amber-500 px-1.5 py-1 text-[10px] font-bold leading-none text-white">
             Reservado
           </span>
         )}
-        {belowFipe && v.status === "available" && (
-          <span className="absolute left-3 top-3 rounded-md bg-emerald-600 px-2 py-1 text-xs font-bold text-white">
-            Abaixo da FIPE
+      </Link>
+      <FavoriteButton id={v.id} className="absolute right-2.5 top-2.5" />
+      <Link href={`/veiculo/${v.slug}`} className="mt-3 flex flex-1 flex-col px-0.5">
+        <p className="line-clamp-2 text-[15px] font-semibold leading-snug text-[#1f1f1f]">
+          {v.brand} {v.model} {v.version} {v.year}
+        </p>
+        {v.tag && (
+          <span className="mt-2 w-fit rounded-full bg-ranger-lilac px-2 py-0.5 text-[10px] font-semibold text-ranger-purple">
+            {v.tag}
           </span>
         )}
-      </div>
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <p className="font-heading text-lg font-bold leading-tight">
-          {v.brand} {v.model}
+        <p className="mt-3 text-base font-bold text-[#1f1f1f]">{brl(v.price)}</p>
+        <p className="mt-3 flex gap-3 text-[10px] text-[#6b6b76]">
+          <span>{publishedAt(v.stockedAt)}</span>
+          <span>{store.city}</span>
         </p>
-        <p className="line-clamp-1 text-sm text-muted-foreground">{v.version}</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {v.year} · {km(v.km)} · {v.transmission}
-        </p>
-        <p className="mt-auto pt-3 font-heading text-2xl font-extrabold text-primary">{brl(v.price)}</p>
-        <p className="flex items-center gap-1 text-xs text-muted-foreground">
-          <MapPin className="size-3" /> {store.city}
-        </p>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

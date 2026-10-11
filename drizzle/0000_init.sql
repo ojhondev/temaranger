@@ -6,6 +6,7 @@ CREATE TYPE "app"."listing_status" AS ENUM('published', 'paused', 'removed', 'er
 CREATE TYPE "app"."marketplace" AS ENUM('olx', 'webmotors', 'mercadolivre');--> statement-breakpoint
 CREATE TYPE "app"."user_role" AS ENUM('manager', 'seller');--> statement-breakpoint
 CREATE TYPE "app"."vehicle_status" AS ENUM('available', 'reserved', 'sold');--> statement-breakpoint
+CREATE TYPE "app"."vehicle_type" AS ENUM('car', 'moto');--> statement-breakpoint
 CREATE TABLE "app"."leads" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"tenant_id" integer NOT NULL,
@@ -51,7 +52,8 @@ CREATE TABLE "app"."tenants" (
 	"slug" text NOT NULL,
 	"name" text NOT NULL,
 	"domain" text,
-	"primary_color" text DEFAULT '#dc2626' NOT NULL,
+	"logo_url" text,
+	"primary_color" text DEFAULT '#e3173e' NOT NULL,
 	"whatsapp" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -82,7 +84,9 @@ CREATE TABLE "app"."vehicles" (
 	"brand" text NOT NULL,
 	"model" text NOT NULL,
 	"version" text,
+	"type" "app"."vehicle_type" DEFAULT 'car' NOT NULL,
 	"year" integer NOT NULL,
+	"year_model" integer,
 	"km" integer DEFAULT 0 NOT NULL,
 	"price" integer NOT NULL,
 	"fipe_price" integer,
@@ -92,6 +96,12 @@ CREATE TABLE "app"."vehicles" (
 	"body_type" text,
 	"description" text,
 	"photos" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"optionals" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"accepts_trade" boolean DEFAULT true NOT NULL,
+	"factory_warranty" boolean DEFAULT false NOT NULL,
+	"has_history_report" boolean DEFAULT false NOT NULL,
+	"featured" boolean DEFAULT false NOT NULL,
+	"tag" text,
 	"status" "app"."vehicle_status" DEFAULT 'available' NOT NULL,
 	"stocked_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"sold_at" timestamp with time zone,

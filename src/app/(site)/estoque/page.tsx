@@ -1,94 +1,74 @@
-import Link from "next/link";
-
+import { FiltersShell } from "@/components/ranger/filters-shell";
+import { HeaderHome } from "@/components/ranger/header-home";
+import { SortSelect } from "@/components/ranger/sort-select";
 import { VehicleCard } from "@/components/site/vehicle-card";
-import { listBrands, listPublicVehicles, listStores, type StockFilters } from "@/db/queries";
+import { BODY_TYPES } from "@/config/ranger";
+import { getFacets, listBrands, listPublicVehicles, type StockFilters } from "@/db/queries";
+import { POPULAR_BRANDS, brandLogo } from "@/lib/brands";
 import { getTenant } from "@/lib/tenant";
 
-export const metadata = { title: "Estoque" };
+export const metadata = { title: "Carros seminovos à venda" };
 
-const SELECT = "h-10 w-full rounded-lg border bg-white px-3 text-sm";
+const FILTER_KEYS: (keyof StockFilters)[] = [
+  "q", "cidade", "marca", "modelo", "carroceria", "cambio", "loja", "anoMin", "anoMax", "precoMin", "precoMax", "kmMax",
+];
 
 export default async function Estoque({ searchParams }: { searchParams: Promise<StockFilters> }) {
   const f = await searchParams;
   const tenant = await getTenant();
-  const [rows, brands, stores] = await Promise.all([
-    listPublicVehicles(tenant.id, f),
-    listBrands(tenant.id),
-    listStores(tenant.id),
+  const [rows, inStock, facets] = await Promise.all([
+    listPublicVehicles(tenant.id, f, 120),
+    listBrands(tenant.id, f.tipo === "motos" ? "moto" : "car"),
+    getFacets(tenant.id),
   ]);
-  const year = new Date().getFullYear();
+
+  // Marcas populares primeiro, depois as demais que existem no estoque.
+  const names = [...POPULAR_BRANDS.filter((b) => inStock.includes(b)), ...inStock.filter((b) => !POPULAR_BRANDS.includes(b))];
+  const brands = names.map((name) => ({ name, logo: brandLogo(name) }));
+  const bodies = BODY_TYPES.filter((b) => facets.bodies[b]);
+  const appliedCount = FILTER_KEYS.filter((k) => f[k]).length;
+  const what = f.tipo === "motos" ? "Motos" : "Carros";
 
   return (
-    <div className="grid gap-8 px-4 py-10 sm:px-8 lg:grid-cols-[260px_1fr]">
-      <aside>
-        <form className="sticky top-24 flex flex-col gap-4 rounded-xl border bg-card p-5">
-          <p className="font-heading text-lg font-bold">Filtrar</p>
-          <input name="q" defaultValue={f.q} placeholder="Modelo ou versão" className={SELECT} />
-          <select name="marca" defaultValue={f.marca ?? ""} className={SELECT}>
-            <option value="">Todas as marcas</option>
-            {brands.map((b) => (
-              <option key={b}>{b}</option>
-            ))}
-          </select>
-          <select name="loja" defaultValue={f.loja ?? ""} className={SELECT}>
-            <option value="">Todas as lojas</option>
-            {stores.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-          <select name="precoMax" defaultValue={f.precoMax ?? ""} className={SELECT}>
-            <option value="">Preço máximo</option>
-            {[60000, 80000, 100000, 130000, 160000, 200000, 250000].map((p) => (
-              <option key={p} value={p}>
-                Até R$ {p.toLocaleString("pt-BR")}
-              </option>
-            ))}
-          </select>
-          <select name="anoMin" defaultValue={f.anoMin ?? ""} className={SELECT}>
-            <option value="">Ano mínimo</option>
-            {Array.from({ length: 8 }, (_, i) => year - i).map((y) => (
-              <option key={y} value={y}>
-                A partir de {y}
-              </option>
-            ))}
-          </select>
-          <select name="kmMax" defaultValue={f.kmMax ?? ""} className={SELECT}>
-            <option value="">Km máximo</option>
-            {[20000, 40000, 60000, 80000, 100000].map((k) => (
-              <option key={k} value={k}>
-                Até {k.toLocaleString("pt-BR")} km
-              </option>
-            ))}
-          </select>
-          <select name="ordem" defaultValue={f.ordem ?? ""} className={SELECT}>
-            <option value="">Mais recentes</option>
-            <option value="menor-preco">Menor preço</option>
-            <option value="maior-preco">Maior preço</option>
-            <option value="menor-km">Menor km</option>
-          </select>
-          <button className="h-10 rounded-lg bg-primary font-semibold text-white hover:opacity-90">Aplicar</button>
-          <Link href="/estoque" className="text-center text-sm text-muted-foreground hover:underline">
-            Limpar filtros
-          </Link>
-        </form>
-      </aside>
+    <>
+      <HeaderHome tenant={tenant} q={f.q} />
+      <main className="mx-auto grid max-w-[1440px] gap-6 px-4 pb-10 pt-4 lg:grid-cols-[400px_1fr] lg:gap-10 lg:px-[3%]">
+        <FiltersShell
+          filters={f}
+          brands={brands}
+          transmissions={facets.transmissions}
+          bodies={bodies}
+          appliedCount={appliedCount}
+        />
 
-      <section>
-        <h1 className="font-heading text-3xl font-extrabold tracking-tight">
-          {rows.length} {rows.length === 1 ? "veículo" : "veículos"}
-        </h1>
-        {rows.length === 0 ? (
-          <p className="mt-6 text-muted-foreground">Nenhum veículo com esses filtros.</p>
-        ) : (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-            {rows.map((r) => (
-              <VehicleCard key={r.vehicle.id} {...r} />
-            ))}
+        <section className="min-w-0">
+          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-[#e2e2e8] pb-4">
+            <div>
+              <h1 className="font-heading text-2xl font-semibold text-[#1f1f1f]">
+                {what} {f.marca ? `${f.marca} ` : ""}
+                {f.modelo ? `${f.modelo} ` : ""}à venda{f.cidade ? ` em ${f.cidade}` : ""}
+              </h1>
+              <p className="mt-1 text-sm text-[#6b6b76]">
+                {rows.length} {rows.length === 1 ? "anúncio encontrado" : "anúncios encontrados"}
+              </p>
+            </div>
+            <SortSelect value={f.ordem} />
           </div>
-        )}
-      </section>
-    </div>
+
+          {rows.length === 0 ? (
+            <div className="py-20 text-center">
+              <p className="font-heading text-lg font-semibold">Nenhum anúncio com esses filtros</p>
+              <p className="mt-1 text-sm text-muted-foreground">Tente remover algum filtro ou ampliar a faixa de preço.</p>
+            </div>
+          ) : (
+            <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-3 2xl:grid-cols-4">
+              {rows.map((r) => (
+                <VehicleCard key={r.vehicle.id} {...r} />
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+    </>
   );
 }

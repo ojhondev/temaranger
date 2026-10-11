@@ -32,18 +32,29 @@ export async function submitInterest(formData: FormData) {
     redirect(`/veiculo/${row.vehicle.slug}?erro=1`);
   }
 
+  const email = String(formData.get("email") ?? "").trim().slice(0, 160);
   await createLead({
     tenantId: tenant.id,
     vehicleId: row.vehicle.id,
     channel: "site",
     name,
     phone,
+    email: /^\S+@\S+\.\S+$/.test(email) ? email : null,
     message: String(formData.get("message") ?? "").slice(0, 1000) || null,
+    marketingOptIn: formData.get("optIn") === "on",
   });
   redirect(`/veiculo/${row.vehicle.slug}?enviado=1`);
 }
 
-/** Botão de WhatsApp: registra o lead, escolhe o vendedor do rodízio e abre a conversa. */
+const INTENTS: Record<string, string> = {
+  video: "Gostaria de agendar uma videochamada para ver o",
+  report: "Quero reportar um problema no anúncio do",
+};
+
+/**
+ * Botão de WhatsApp: registra o lead, escolhe o vendedor do rodízio e abre a conversa.
+ * `intent` muda a mensagem (ex.: agendar videochamada).
+ */
 export async function startWhatsapp(formData: FormData) {
   const tenant = await getTenant();
   const row = await findVehicle(tenant.id, Number(formData.get("vehicleId")));
@@ -55,8 +66,10 @@ export async function startWhatsapp(formData: FormData) {
     vehicleId: v.id,
     channel: "whatsapp",
     name: "Contato via WhatsApp",
+    message: formData.get("intent") === "video" ? "Quer agendar uma videochamada." : null,
   });
   const number = seller?.phone ?? row.store.whatsapp ?? tenant.whatsapp;
-  const text = `Olá${seller ? `, ${seller.name.split(" ")[0]}` : ""}! Tenho interesse no ${v.brand} ${v.model} ${v.year} (${v.version}).`;
+  const intro = INTENTS[String(formData.get("intent"))] ?? "Tenho interesse no";
+  const text = `Olá${seller ? `, ${seller.name.split(" ")[0]}` : ""}! ${intro} ${v.brand} ${v.model} ${v.year} (${v.version}).`;
   redirect(`https://wa.me/${number}?text=${encodeURIComponent(text)}`);
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "app"."leads" ADD COLUMN "marketing_opt_in" boolean DEFAULT false NOT NULL;

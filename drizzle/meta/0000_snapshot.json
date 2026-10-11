@@ -1,5 +1,5 @@
 {
-  "id": "0163768b-03b7-4641-b967-fd7da90208c7",
+  "id": "cab4e3ce-cabb-458e-83b7-0be877c04f3f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -447,12 +447,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "logo_url": {
+          "name": "logo_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "primary_color": {
           "name": "primary_color",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": "'#dc2626'"
+          "default": "'#e3173e'"
         },
         "whatsapp": {
           "name": "whatsapp",
@@ -679,11 +685,25 @@
           "primaryKey": false,
           "notNull": false
         },
+        "type": {
+          "name": "type",
+          "type": "vehicle_type",
+          "typeSchema": "app",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'car'"
+        },
         "year": {
           "name": "year",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "year_model": {
+          "name": "year_model",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "km": {
           "name": "km",
@@ -740,6 +760,47 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'[]'::jsonb"
+        },
+        "optionals": {
+          "name": "optionals",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "accepts_trade": {
+          "name": "accepts_trade",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "factory_warranty": {
+          "name": "factory_warranty",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "has_history_report": {
+          "name": "has_history_report",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "featured": {
+          "name": "featured",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "tag": {
+          "name": "tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "status": {
           "name": "status",
@@ -915,6 +976,14 @@
         "available",
         "reserved",
         "sold"
+      ]
+    },
+    "app.vehicle_type": {
+      "name": "vehicle_type",
+      "schema": "app",
+      "values": [
+        "car",
+        "moto"
       ]
     }
   },
