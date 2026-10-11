@@ -12,7 +12,7 @@ import { isManager, requireSession } from "@/lib/auth";
 import { CHANNELS, MARKETPLACES } from "@/lib/format";
 import { getTenant } from "@/lib/tenant";
 
-const CHANNEL_COLORS = ["#e3173e", "#f37b93", "#9b5cf6", "#fbbf24", "#2a2a33", "#cfd0d8"];
+const CHANNEL_COLORS = ["#4f6be6", "#a5b4f5", "#9b5cf6", "#fbbf24", "#2a2a33", "#cfd0d8"];
 
 export default async function Inicio({ searchParams }: { searchParams: Promise<{ "sem-permissao"?: string }> }) {
   const session = await requireSession();
@@ -122,16 +122,16 @@ export default async function Inicio({ searchParams }: { searchParams: Promise<{
             </p>
             <div className="mt-3 flex items-center justify-between gap-3">
               <ul className="flex min-w-0 flex-col gap-2.5">
-                <Legend color="#e3173e" value={h.publishedVehicles} label="Publicados nos portais" />
-                <Legend color="#f37b93" value={onlySite} label="Só no site" />
+                <Legend color="#4f6be6" value={h.publishedVehicles} label="Publicados nos portais" />
+                <Legend color="#a5b4f5" value={onlySite} label="Só no site" />
                 <Legend color="#9b5cf6" value={h.reserved} label="Reservados" />
               </ul>
               <Donut
                 size={112}
                 thickness={26}
                 segments={[
-                  { value: h.publishedVehicles, color: "#e3173e" },
-                  { value: onlySite, color: "#f37b93" },
+                  { value: h.publishedVehicles, color: "#4f6be6" },
+                  { value: onlySite, color: "#a5b4f5" },
                   { value: h.reserved, color: "#9b5cf6" },
                 ]}
               />

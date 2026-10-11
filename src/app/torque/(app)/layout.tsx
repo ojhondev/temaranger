@@ -42,7 +42,7 @@ export default async function TorqueLayout({ children }: { children: React.React
   return (
     <div
       className="flex min-h-dvh bg-[#f3f3f6] font-heading text-[#1f1f28]"
-      style={{ "--primary": "#e3173e" } as React.CSSProperties}
+      style={{ "--primary": "#4f6be6" } as React.CSSProperties}
     >
       <TourProvider initialSeen={session.user.toursSeen} supportWhatsapp={process.env.SOFTMOTORS_WHATSAPP ?? null}>
         <Sidebar isManager={manager} isMaster={session.role === "master"} />

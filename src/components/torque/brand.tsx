@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
 
-/** Ícone do Torque: um conta-giros com o ponteiro no vermelho. */
+/** Ícone do Torque: um conta-giros na cor da marca SoftMotors. */
 export function TorqueIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 32 32" className={className} aria-hidden>
-      <circle cx="16" cy="16" r="14" fill="#e3173e" />
+      <circle cx="16" cy="16" r="14" fill="#4f6be6" />
       <path d="M7 21a10 10 0 1 1 18 0" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
       <path d="M16 18 L22.5 10.5" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
       <circle cx="16" cy="18" r="2.4" fill="#fff" />

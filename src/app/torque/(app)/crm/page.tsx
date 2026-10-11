@@ -139,7 +139,7 @@ export default async function CrmPainel() {
               <div className="mt-4 flex flex-col gap-2">
                 {funnel.map((st, i) => (
                   <div key={st.label} className="flex items-center gap-3 text-sm">
-                    <div className="h-8 rounded" style={{ width: `${Math.max(8, (st.n / max) * 100)}%`, background: ["#2a2a33", "#e3173e", "#14958f"][i] }} />
+                    <div className="h-8 rounded" style={{ width: `${Math.max(8, (st.n / max) * 100)}%`, background: ["#2a2a33", "#4f6be6", "#14958f"][i] }} />
                     <span className="shrink-0 font-semibold tabular-nums">{st.n}</span>
                     <span className="shrink-0 text-[#6b6b76]">{st.label}</span>
                   </div>

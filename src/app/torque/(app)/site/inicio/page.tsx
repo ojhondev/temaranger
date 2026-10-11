@@ -26,7 +26,7 @@ export default async function SiteInicio({ searchParams }: { searchParams: Promi
             {(Object.keys(SECTION_LABELS) as SectionKey[]).map((k) => (
               <label key={k} className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-[#e2e2e8] px-4 py-3 text-sm has-[:checked]:border-primary">
                 {SECTION_LABELS[k]}
-                <input type="checkbox" name={`section_${k}`} defaultChecked={st.sections[k]} className="size-4 accent-[#e3173e]" />
+                <input type="checkbox" name={`section_${k}`} defaultChecked={st.sections[k]} className="size-4 accent-[#4f6be6]" />
               </label>
             ))}
           </div>
