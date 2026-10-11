@@ -48,6 +48,12 @@ export const tenants = app.table("tenants", {
   logoUrl: text(),
   primaryColor: text().notNull().default("#e3173e"),
   whatsapp: text(),
+  /** Tema da vitrine. Hoje só "ranger"; outros temas rodam na mesma plataforma. */
+  theme: text().notNull().default("ranger"),
+  /** Loja desativada: site fora do ar e Torque só para o master. */
+  active: boolean().notNull().default(true),
+  /** Quando o domínio próprio foi confirmado apontando para a plataforma. */
+  domainVerifiedAt: timestamp({ withTimezone: true }),
   /** Tudo o que a loja edita no Torque sem depender da SoftMotors (textos, contatos, SEO…). */
   settings: jsonb().$type<TenantSettings>().notNull().default({}),
   ...timestamps,

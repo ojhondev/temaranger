@@ -6,6 +6,7 @@ const ITEMS = [
   { href: "/torque/site/inicio", label: "Página inicial" },
   { href: "/torque/site/contato", label: "Contato e WhatsApp" },
   { href: "/torque/site/lojas", label: "Lojas" },
+  { href: "/torque/site/dominio", label: "Domínio" },
 ];
 
 export function SiteTabs({ active }: { active: string }) {

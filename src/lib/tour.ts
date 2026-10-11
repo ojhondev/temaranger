@@ -160,12 +160,48 @@ export const TOURS: Tour[] = [
   },
 ];
 
+TOURS.push(
+  {
+    id: "clientes",
+    name: "Clientes (master)",
+    route: (p) => p === "/torque/clientes",
+    steps: [
+      {
+        target: "clientes-nova",
+        title: "Vendeu? Crie a loja aqui",
+        text: "Nome, cidade e e-mail do gestor. A loja nasce com o tema Ranger, banners padrão e o site já no ar em <b>{loja}.softmotors.com.br</b>. Copie a senha provisória e envie ao gestor.",
+        side: "left",
+      },
+      {
+        target: "clientes-lista",
+        title: "Todas as lojas da plataforma",
+        text: "Endereços, domínio próprio, estoque e último acesso. <b>Abrir Torque</b> entra no painel da loja com a sua conta master.",
+        side: "top",
+      },
+    ],
+  },
+  {
+    id: "dominio",
+    name: "Domínio",
+    route: (p) => p === "/torque/site/dominio",
+    steps: [
+      {
+        target: "dominio-conectar",
+        title: "Seu domínio, seu site",
+        text: "Digite o endereço com www e conecte. Em seguida aparecem os 2 registros de DNS para criar onde o domínio foi registrado.",
+        side: "top",
+      },
+    ],
+  },
+);
+
 export const GLOSSARY = [
   { term: "Lead", meaning: "Um cliente interessado: alguém que mandou mensagem, chamou no WhatsApp ou pediu contato por um portal." },
   { term: "Fila comum (rodízio)", meaning: "Cada lead novo vai para o vendedor ativo da loja do carro que está há mais tempo sem receber." },
   { term: "Marketplace / portal", meaning: "Sites como OLX, WebMotors e Mercado Livre, onde seus carros são anunciados além do seu próprio site." },
   { term: "Anúncio com erro", meaning: "O portal recusou o anúncio (foto faltando, dado inválido). Abra o carro no Estoque para corrigir." },
   { term: "Destaque", meaning: "O carro aparece primeiro no site e ganha o selo roxo “Destaque”." },
+  { term: "Domínio / DNS", meaning: "O endereço do seu site (www.sualoja.com.br). O DNS é a configuração, feita onde o domínio foi registrado, que aponta esse endereço para a plataforma." },
   { term: "Carro parado", meaning: "Veículo há mais de 60 dias no estoque. Vale rever preço, fotos ou fazer campanha." },
 ];
 

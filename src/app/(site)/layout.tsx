@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { Footer } from "@/components/ranger/footer";
 import { listStores } from "@/db/queries";
 import { settingsOf } from "@/lib/settings";
@@ -16,6 +18,7 @@ export async function generateMetadata() {
 /** Cada página escolhe o próprio header (home/busca ou página do veículo). */
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const tenant = await getTenant();
+  if (!tenant.active) notFound();
   const stores = await listStores(tenant.id);
 
   return (

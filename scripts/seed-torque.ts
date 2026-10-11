@@ -10,7 +10,7 @@ async function main() {
   const { eq } = await import("drizzle-orm");
   const { db } = await import("../src/db/index");
   const { banners, marketplaceAccounts, tenants } = await import("../src/db/schema");
-  const { HERO_BANNERS, fill } = await import("../src/config/ranger");
+  const { defaultBanners } = await import("../src/lib/provision");
   const { applyAccountRules } = await import("../src/lib/marketplaces");
 
   const [t] = await db.select().from(tenants).where(eq(tenants.slug, "demo"));
@@ -18,19 +18,7 @@ async function main() {
 
   const existing = await db.select().from(banners).where(eq(banners.tenantId, t.id));
   if (!existing.length) {
-    await db.insert(banners).values([
-      ...HERO_BANNERS.map((b, i) => ({
-        tenantId: t.id,
-        placement: "hero" as const,
-        title: fill(b.title, t.name),
-        subtitle: fill(b.subtitle, t.name),
-        ctaLabel: b.cta,
-        href: b.href,
-        position: i,
-      })),
-      { tenantId: t.id, placement: "promo" as const, heading: "Vai comprar ou vender?", title: "Preços pela Tabela FIPE", subtitle: "Confira para negociar", ctaLabel: "Ver agora", href: "/estoque?ordem=menor-preco", position: 0 },
-      { tenantId: t.id, placement: "promo" as const, heading: "Financie com a gente", title: "Você de carro novo", subtitle: "Parcelas que cabem no bolso", ctaLabel: "Ver ofertas", href: "/estoque", position: 1 },
-    ]);
+    await db.insert(banners).values(defaultBanners(t));
     console.log("Banners criados.");
   }
 

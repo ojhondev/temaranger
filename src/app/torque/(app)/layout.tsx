@@ -45,7 +45,7 @@ export default async function TorqueLayout({ children }: { children: React.React
       style={{ "--primary": "#e3173e" } as React.CSSProperties}
     >
       <TourProvider initialSeen={session.user.toursSeen} supportWhatsapp={process.env.SOFTMOTORS_WHATSAPP ?? null}>
-        <Sidebar isManager={manager} />
+        <Sidebar isManager={manager} isMaster={session.role === "master"} />
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar
             userName={session.user.name}

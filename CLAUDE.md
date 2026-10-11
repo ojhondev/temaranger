@@ -101,3 +101,22 @@ Migrations pendentes (`npm run db:migrate`) são aplicadas no banco de destino n
   logo, cores, WhatsApp, lojas, seções da home) é editável lá, sem depender da SoftMotors.
 - **Marketplaces são o módulo primordial**: conectar um portal tem que caber em poucos
   cliques (hoje: 3 passos no assistente).
+
+## Instalação de loja (modelo Shopify) e domínios
+
+- **Um deploy, N lojas.** "Instalar o tema" para um cliente = criar a loja em
+  Torque > **Clientes** (só master; `lib/provision.ts`): loja, 1ª unidade, gestor com senha
+  provisória (mostrada uma vez) e banners padrão. Sem deploy por cliente.
+- **Endereço da plataforma:** `{slug}.softmotors.com.br`. DNS do softmotors.com.br fica na
+  **HostGator** com um CNAME curinga `*` → `cname.vercel-dns.com`; cada subdomínio é
+  registrado no projeto Vercel na criação da loja (`lib/vercel-domains.ts`, wildcard de SSL
+  não é possível com DNS fora da Vercel). `www` e outros nomes reservados não viram loja
+  (`lib/platform.ts`). Resolução da loja: domínio próprio → subdomínio → `DEFAULT_TENANT`.
+- **Domínio próprio:** a loja conecta em Site > **Domínio** (CNAME `www` + A na raiz
+  `76.76.21.21`; sem www só redireciona). Verificação pela API da Vercel ou, sem token,
+  por consulta de DNS direta.
+- **Token:** `VERCEL_API_TOKEN` (criado pelo dono em vercel.com/account/tokens) +
+  `VERCEL_PROJECT_ID`/`VERCEL_TEAM_ID`. Sem token, as telas mostram o comando
+  `vercel domains add` para o master rodar.
+- Sessão nos subdomínios usa cookie em `.softmotors.com.br` (master entra uma vez e abre o
+  Torque de qualquer loja). Loja desativada (`tenants.active=false`): site 404, só master entra.

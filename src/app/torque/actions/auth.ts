@@ -19,6 +19,9 @@ export async function login(_: LoginState, formData: FormData): Promise<LoginSta
   const [user] = await db.select().from(users).where(eq(users.email, email));
   const ok = user?.active && (await verifyPassword(password, user.passwordHash));
   const tenant = await getTenant();
+  if (ok && user.role !== "master" && user.tenantId === tenant.id && !tenant.active) {
+    return { error: "Esta loja está desativada. Fale com a SoftMotors." };
+  }
   if (!ok || (user.role !== "master" && user.tenantId !== tenant.id)) {
     await new Promise((r) => setTimeout(r, 600));
     return { error: "E-mail ou senha incorretos." };

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Building2,
   CarFront,
   ChevronRight,
   CircleHelp,
@@ -29,6 +30,7 @@ type Item = {
   badge?: string;
   children?: { href: string; label: string }[];
   managerOnly?: boolean;
+  masterOnly?: boolean;
 };
 
 const MAIN: Item[] = [
@@ -64,14 +66,16 @@ const MAIN: Item[] = [
       { href: "/torque/site/inicio", label: "Página inicial" },
       { href: "/torque/site/contato", label: "Contato e WhatsApp" },
       { href: "/torque/site/lojas", label: "Lojas" },
+      { href: "/torque/site/dominio", label: "Domínio" },
     ],
   },
   { href: "/torque/equipe", label: "Equipe", icon: Users, managerOnly: true },
+  { href: "/torque/clientes", label: "Clientes", icon: Building2, badge: "MASTER", masterOnly: true },
 ];
 
 const KEY = "torque:menu-fixo";
 
-export function Sidebar({ isManager }: { isManager: boolean }) {
+export function Sidebar({ isManager, isMaster = false }: { isManager: boolean; isMaster?: boolean }) {
   const pathname = usePathname();
   const { openHelp, startTour } = useTour();
   const [pinned, setPinned] = useState(true);
@@ -86,7 +90,7 @@ export function Sidebar({ isManager }: { isManager: boolean }) {
 
   const expanded = pinned || hover;
   const isActive = (href: string) => (href === "/torque" ? pathname === href : pathname.startsWith(href));
-  const items = MAIN.filter((i) => isManager || !i.managerOnly);
+  const items = MAIN.filter((i) => (isManager || !i.managerOnly) && (isMaster || !i.masterOnly));
 
   function togglePin() {
     const next = !pinned;
@@ -209,7 +213,7 @@ export function Sidebar({ isManager }: { isManager: boolean }) {
 /** Menu do celular: barra inferior com os módulos principais. */
 export function MobileNav({ isManager }: { isManager: boolean }) {
   const pathname = usePathname();
-  const items = MAIN.filter((i) => isManager || !i.managerOnly).slice(0, 5);
+  const items = MAIN.filter((i) => (isManager || !i.managerOnly) && !i.masterOnly).slice(0, 5);
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex justify-around border-t bg-[#2a2a33] py-1.5 md:hidden">
       {items.map(({ href, label, icon: Icon }) => {

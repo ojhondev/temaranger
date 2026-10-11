@@ -7,7 +7,8 @@ import { cache } from "react";
 import { db } from "@/db";
 import { users, type User, type UserRole } from "@/db/schema";
 
-import { getTenant } from "./tenant";
+import { PLATFORM_DOMAIN } from "./platform";
+import { getTenant, requestHost } from "./tenant";
 
 export const SESSION_COOKIE = "torque_session";
 const SESSION_DAYS = 30;
@@ -32,11 +33,24 @@ export async function createSession(userId: number) {
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * SESSION_DAYS,
+    ...(await cookieDomain()),
   });
 }
 
+/**
+ * Nos subdomínios da plataforma o cookie vale para `.softmotors.com.br`: o master entra uma
+ * vez e abre o Torque de qualquer loja. Em domínio próprio, o cookie é só daquele domínio.
+ */
+async function cookieDomain() {
+  const host = await requestHost();
+  return host.endsWith(`.${PLATFORM_DOMAIN}`) ? { domain: `.${PLATFORM_DOMAIN}` } : {};
+}
+
 export async function destroySession() {
-  (await cookies()).delete(SESSION_COOKIE);
+  const store = await cookies();
+  store.delete(SESSION_COOKIE);
+  const shared = await cookieDomain();
+  if (shared.domain) store.set(SESSION_COOKIE, "", { path: "/", maxAge: 0, ...shared });
 }
 
 export type Session = { user: User; tenantId: number; role: UserRole };
@@ -57,7 +71,7 @@ export const getSession = cache(async (): Promise<Session | null> => {
       .where(and(eq(users.id, payload.uid), eq(users.active, true)));
     if (!user || !user.passwordHash) return null;
     const tenant = await getTenant();
-    if (user.role !== "master" && user.tenantId !== tenant.id) return null;
+    if (user.role !== "master" && (user.tenantId !== tenant.id || !tenant.active)) return null;
     return { user, tenantId: tenant.id, role: user.role };
   } catch {
     return null;
@@ -73,3 +87,4 @@ export async function requireSession(roles?: UserRole[]) {
 }
 
 export const isManager = (s: Session) => s.role === "master" || s.role === "manager";
+export const isMaster = (s: Session) => s.role === "master";
