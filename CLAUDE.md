@@ -68,6 +68,18 @@ Sem foto, o veículo aparece como ilustração SVG por carroceria (`src/componen
 6. Cuidado ao gerar código por script Node com template string: `\\D` vira `D` e quebra
    regex (já aconteceu com o filtro de números e a validação de e-mail).
 
+## Template e demonstração em tempo real
+
+- **template.softmotors.com.br**: a loja de vitrine (tenant `template`, antes `demo`). É a
+  fonte do estoque copiado para as demonstrações e o `DEFAULT_TENANT` do localhost.
+- **demo.softmotors.com.br**: demonstração em tempo real. A LP (softmotors.com.br) posta o
+  WhatsApp em `/api/demo/start` → formulário `/comecar` → `createSandbox` (`src/lib/sandbox.ts`)
+  cria uma loja `sandbox` com a marca do visitante, que expira em 7 dias (cron diário
+  `/api/cron/purge-demos`, protegido por `CRON_SECRET`). A loja vem do cookie `sm_demo`.
+  Torque com login automático (`/api/demo/torque`), limite de 1 veículo, domínio bloqueado.
+  Leads comerciais na tabela `demo_leads`, tela master **Demonstrações**.
+- Em dev, use `http://demo.localhost:3018` (liberado em `allowedDevOrigins`).
+
 ## Central de Ajuda
 
 - `ajuda.softmotors.com.br` (o middleware reescreve para as rotas de `src/app/ajuda`; em
