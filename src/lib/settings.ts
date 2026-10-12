@@ -2,7 +2,7 @@ import { and, asc, eq } from "drizzle-orm";
 
 import { FINANCING, HERO_BANNERS, fill } from "@/config/ranger";
 import { db } from "@/db";
-import { banners, type Tenant, type TenantSettings } from "@/db/schema";
+import { banners, type LeadAction, type PopupAction, type Tenant, type TenantSettings } from "@/db/schema";
 
 export const DEFAULT_SECTIONS = {
   models: true,
@@ -41,8 +41,53 @@ export function settingsOf(tenant: Tenant) {
       cta: s.sellBanner?.cta || "Vender veículo",
     },
     sections: { ...DEFAULT_SECTIONS, ...(s.sections ?? {}) },
+    layout: s.layout ?? "full",
+    topBar: {
+      enabled: s.topBar?.enabled ?? false,
+      text: s.topBar?.text ?? "",
+      linkLabel: s.topBar?.linkLabel ?? "",
+      href: s.topBar?.href ?? "",
+      bg: s.topBar?.bg || "#1f1f28",
+      fg: s.topBar?.fg || "#ffffff",
+      dismissible: s.topBar?.dismissible ?? true,
+    },
+    popup: {
+      enabled: s.popup?.enabled ?? false,
+      title: s.popup?.title ?? "",
+      text: s.popup?.text ?? "",
+      imageUrl: s.popup?.imageUrl ?? "",
+      action: s.popup?.action ?? ("lead" as PopupAction),
+      ctaLabel: s.popup?.ctaLabel || "Quero receber",
+      href: s.popup?.href ?? "",
+      delaySeconds: s.popup?.delaySeconds ?? 5,
+      frequency: s.popup?.frequency ?? "day",
+      pages: s.popup?.pages ?? "all",
+    },
+    leadFlow: {
+      primary: s.leadFlow?.primary ?? ("form" as LeadAction),
+      secondary: s.leadFlow?.secondary ?? ("whatsapp" as LeadAction | "none"),
+      askData: s.leadFlow?.askData ?? false,
+      afterForm: s.leadFlow?.afterForm ?? "message",
+      emailRequired: s.leadFlow?.emailRequired ?? true,
+      title: s.leadFlow?.title || "Envie uma mensagem ao vendedor",
+      labels: { ...LEAD_ACTION_LABELS, ...(s.leadFlow?.labels ?? {}) },
+    },
+    priceReference: {
+      enabled: s.priceReference?.enabled ?? true,
+      title: s.priceReference?.title || "Referência de preço",
+      text: s.priceReference?.text ?? "",
+      imageUrl: s.priceReference?.imageUrl ?? "",
+      href: s.priceReference?.href ?? "",
+      showFipe: s.priceReference?.showFipe ?? true,
+    },
   };
 }
+
+export const LEAD_ACTION_LABELS: Record<LeadAction, string> = {
+  form: "Enviar mensagem",
+  whatsapp: "Falar no WhatsApp",
+  call: "Ligar para a loja",
+};
 
 export type ResolvedSettings = ReturnType<typeof settingsOf>;
 

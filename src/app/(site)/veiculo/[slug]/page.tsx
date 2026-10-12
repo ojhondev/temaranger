@@ -3,8 +3,10 @@ import { Flag, Info, MessageCircle, Video } from "lucide-react";
 
 import { FavoriteButton } from "@/components/ranger/favorite-button";
 import { HeaderPdp } from "@/components/ranger/header-pdp";
+import { MobileGallery } from "@/components/ranger/mobile-gallery";
+import { PdpActionBar, PdpContactCard, PdpMobilePrice } from "@/components/ranger/pdp-contact";
 import { PdpGallery } from "@/components/ranger/pdp-gallery";
-import { PdpLeadCard } from "@/components/ranger/pdp-lead-card";
+import { PriceReference } from "@/components/ranger/price-reference";
 import { Rail } from "@/components/ranger/rail";
 import { VehicleCard } from "@/components/site/vehicle-card";
 import { BODY_LABEL } from "@/config/ranger";
@@ -36,8 +38,11 @@ export default async function VehiclePage({ params, searchParams }: Props) {
   const row = await getPublicVehicle(tenant.id, (await params).slug);
   if (!row || row.vehicle.status === "sold") notFound();
   const { vehicle: v, store } = row;
-  const { enviado, erro } = await searchParams;
+  await searchParams;
   const similar = await listSimilar(tenant.id, v);
+  const st = settingsOf(tenant);
+  const title = `${v.brand} ${v.model} ${v.version ?? ""} ${v.year}`.replace(/\s+/g, " ").trim();
+  const contact = { vehicleId: v.id, storeName: tenant.name, flow: st.leadFlow };
 
   const yesNo = (b: boolean) => (b ? "Sim" : "Não");
   const specs: [string, string | number | null][] = [
@@ -65,29 +70,41 @@ export default async function VehiclePage({ params, searchParams }: Props) {
 
   return (
     <>
-      <HeaderPdp tenant={tenant} />
+      <HeaderPdp tenant={tenant} vehicle={{ id: v.id, title }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <main className="grid grid-cols-[minmax(0,1fr)] gap-8 px-4 sm:px-6 pb-10 lg:grid-cols-[minmax(0,1fr)_400px] lg:px-10 2xl:px-14">
         <div className="flex min-w-0 flex-col gap-5">
+          <MobileGallery vehicle={v} />
           <PdpGallery vehicle={v} />
 
-          {/* Preço no celular (o card completo fica no fim da página) */}
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-[#cfcfd6] p-4 lg:hidden">
-            <p className="font-heading text-2xl font-semibold text-[#2e2e38]">{brl(v.price)}</p>
-            <a href="#contato" className="rounded-md bg-primary px-4 py-2.5 text-sm font-bold text-white">
-              Enviar mensagem
-            </a>
+          {/* Celular: resumo como nos apps de classificados; o contato fica na barra fixa do rodapé */}
+          <div className="flex flex-col gap-4 lg:hidden">
+            <div>
+              <h1 className="font-heading text-[20px] font-bold leading-snug text-[#1f1f28]">{title}</h1>
+              <p className="mt-1 text-sm text-[#6b6b76]">
+                {[v.km <= 100 ? "0 km" : km(v.km), v.color, v.transmission].filter(Boolean).join(" • ")}
+              </p>
+            </div>
+            <PdpMobilePrice price={v.price} rate={st.financingRate} />
+            <p className="flex items-center gap-2 border-y border-[#ececf0] py-3 text-sm">
+              <span className="font-semibold text-[#1f1f28]">{tenant.name}</span>
+              <span className="text-[#6b6b76]">· {store.city}</span>
+            </p>
+            {v.status === "reserved" && (
+              <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">Reservado. Fale com a loja para entrar na fila de espera.</p>
+            )}
+            <PriceReference cfg={st.priceReference} price={v.price} fipe={v.fipePrice} />
           </div>
 
           {/* Ficha */}
-          <section className="rounded-2xl border border-[#cfcfd6] bg-white">
-            <div className="px-6 pb-8 pt-8 sm:px-[68px]">
-              <div className="flex flex-wrap items-start justify-between gap-4">
+          <section className="rounded-2xl bg-white lg:border lg:border-[#cfcfd6]">
+            <div className="pb-8 lg:px-[68px] lg:pt-8">
+              <div className="hidden flex-wrap items-start justify-between gap-4 lg:flex">
                 <div>
-                  <h1 className="font-heading text-3xl font-bold uppercase tracking-tight text-[#2e2e38] sm:text-[38px]">
+                  <h2 className="font-heading text-3xl font-bold uppercase tracking-tight text-[#2e2e38] sm:text-[38px]">
                     {v.brand} <span className="text-primary">{v.model}</span>
-                  </h1>
+                  </h2>
                   {v.version && <p className="mt-1 text-[17px] uppercase text-[#6b6b76]">{v.version}</p>}
                 </div>
                 <div className="flex items-center gap-4">
@@ -99,12 +116,12 @@ export default async function VehiclePage({ params, searchParams }: Props) {
               </div>
 
               {v.status === "reserved" && (
-                <p className="mt-5 rounded-lg bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+                <p className="mt-5 hidden rounded-lg bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800 lg:block">
                   Este veículo está reservado. Envie uma mensagem para entrar na fila de espera.
                 </p>
               )}
 
-              <dl className="mt-10 font-heading">
+              <dl className="font-heading lg:mt-10">
                 <div>
                   <dt className="text-[15px] text-[#6b6b76]">Cidade</dt>
                   <dd className="mt-1 text-xl font-semibold text-[#2e2e38]">{store.city}</dd>
@@ -181,8 +198,9 @@ export default async function VehiclePage({ params, searchParams }: Props) {
           )}
         </div>
 
-        <aside id="contato" className="scroll-mt-24 lg:sticky lg:top-[104px] lg:mt-9 lg:self-start">
-          <PdpLeadCard vehicleId={v.id} price={v.price} storeName={tenant.name} sent={!!enviado} error={!!erro} rate={settingsOf(tenant).financingRate} />
+        <aside id="contato" className="hidden scroll-mt-24 lg:sticky lg:top-[104px] lg:mt-9 lg:flex lg:flex-col lg:gap-4 lg:self-start">
+          <PdpContactCard {...contact} price={v.price} rate={st.financingRate} />
+          <PriceReference cfg={st.priceReference} price={v.price} fipe={v.fipePrice} />
         </aside>
 
         {similar.length > 0 && (
@@ -196,6 +214,7 @@ export default async function VehiclePage({ params, searchParams }: Props) {
           </section>
         )}
       </main>
+      <PdpActionBar {...contact} />
     </>
   );
 }

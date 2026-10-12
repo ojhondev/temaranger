@@ -6,7 +6,8 @@ import { PromoBanners } from "@/components/ranger/promo-banners";
 import { Rail } from "@/components/ranger/rail";
 import { SellBanner } from "@/components/ranger/sell-banner";
 import { VehicleCard } from "@/components/site/vehicle-card";
-import { listModels, listPublicVehicles } from "@/db/queries";
+import { QuickSearch } from "@/components/ranger/quick-search";
+import { listBrands, listModels, listPublicVehicles } from "@/db/queries";
 import { brandLogo } from "@/lib/brands";
 import { activeBanners, settingsOf, whatsappLink } from "@/lib/settings";
 import { getTenant } from "@/lib/tenant";
@@ -18,12 +19,13 @@ const CARD = "w-[calc(50%-10px)] shrink-0 snap-start sm:w-[214px] 2xl:w-[248px]"
 export default async function Home() {
   const tenant = await getTenant();
   const st = settingsOf(tenant);
-  const [models, offers, recent, hero, promos] = await Promise.all([
+  const [models, offers, recent, hero, promos, brands] = await Promise.all([
     listModels(tenant.id),
     listPublicVehicles(tenant.id, {}, 16),
     listPublicVehicles(tenant.id, { ordem: "recentes", kmMax: "1" }, 16),
     activeBanners(tenant, "hero"),
     activeBanners(tenant, "promo"),
+    listBrands(tenant.id, "car"),
   ]);
   // "Taxas especiais": anúncios com selo de campanha primeiro.
   const financing = [...offers].sort((a, b) => Number(!!b.vehicle.tag) - Number(!!a.vehicle.tag));
@@ -31,10 +33,11 @@ export default async function Home() {
 
   return (
     <>
-      <HeaderHome tenant={tenant} />
+      <HeaderHome tenant={tenant} chips />
 
-      <main className="flex flex-col gap-12 px-4 pb-8 pt-6 sm:px-6 lg:px-10 2xl:px-14">
+      <main className="flex flex-col gap-8 px-4 pb-8 pt-2 sm:gap-12 sm:px-6 sm:pt-6 lg:px-10 2xl:px-14">
         <HeroCarousel banners={hero} />
+        <QuickSearch brands={brands} />
 
         {show.models && (
           <ModelsSection

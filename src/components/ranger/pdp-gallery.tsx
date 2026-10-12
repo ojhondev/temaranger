@@ -6,7 +6,7 @@ export function PdpGallery({ vehicle: v }: { vehicle: Vehicle }) {
   const extra = Math.max(0, v.photos.length - 5);
   const tile = "size-full aspect-auto";
   return (
-    <div className="grid h-[300px] grid-cols-1 gap-1.5 overflow-hidden sm:h-[460px] sm:grid-cols-[2fr_1fr_1fr] sm:grid-rows-2 lg:h-[604px]">
+    <div className="hidden h-[460px] gap-1.5 overflow-hidden sm:grid sm:grid-cols-[2fr_1fr_1fr] sm:grid-rows-2 lg:h-[604px]">
       <div className="relative sm:row-span-2">
         <VehiclePhoto vehicle={v} index={0} className={tile} />
         {v.hasHistoryReport && (

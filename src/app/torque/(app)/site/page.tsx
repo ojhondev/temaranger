@@ -43,6 +43,19 @@ export default async function SiteIdentidade({ searchParams }: { searchParams: P
                 />
               </div>
             </div>
+            <div className="md:col-span-2">
+              <p className="mb-1.5 text-[13px] font-medium text-[#3d3d47]">Favicon (ícone da aba do navegador)</p>
+              <div className="w-40">
+                <SingleImageUpload
+                  name="faviconUrl"
+                  folder={`lojas/${tenant.id}/marca`}
+                  defaultValue={st.faviconUrl}
+                  aspect="aspect-square"
+                  contain
+                  hint="PNG quadrado, 512×512. Também vira o ícone do atalho no celular."
+                />
+              </div>
+            </div>
           </div>
         </Panel>
 

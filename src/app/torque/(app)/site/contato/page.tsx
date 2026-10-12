@@ -34,7 +34,8 @@ export default async function SiteContato({ searchParams }: { searchParams: Prom
           </div>
         </Panel>
         <Panel>
-          <h2 className="mb-4 text-base font-semibold">Outros contatos e redes</h2>
+          <h2 className="text-base font-semibold">Outros contatos e redes</h2>
+          <p className="mb-4 text-sm text-[#6b6b76]">As redes preenchidas aparecem como ícones no rodapé e no menu do celular. O telefone fixo é usado no botão “Ligar”.</p>
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Telefone fixo">
               <input name="phone" defaultValue={st.phone ?? ""} className={field} />
@@ -49,7 +50,13 @@ export default async function SiteContato({ searchParams }: { searchParams: Prom
               <input name="facebook" defaultValue={st.facebook ?? ""} placeholder="https://facebook.com/sualoja" className={field} />
             </Field>
             <Field label="YouTube (link)">
-              <input name="youtube" defaultValue={st.youtube ?? ""} className={field} />
+              <input name="youtube" defaultValue={st.youtube ?? ""} placeholder="https://youtube.com/@sualoja" className={field} />
+            </Field>
+            <Field label="TikTok (link)">
+              <input name="tiktok" defaultValue={st.tiktok ?? ""} placeholder="https://tiktok.com/@sualoja" className={field} />
+            </Field>
+            <Field label="LinkedIn (link)">
+              <input name="linkedin" defaultValue={st.linkedin ?? ""} placeholder="https://linkedin.com/company/sualoja" className={field} />
             </Field>
           </div>
         </Panel>

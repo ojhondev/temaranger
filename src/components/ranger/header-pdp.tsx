@@ -3,10 +3,12 @@ import { ChevronDown, User } from "lucide-react";
 
 import type { Tenant } from "@/db/schema";
 
+import { FavoriteButton } from "./favorite-button";
 import { Logo } from "./logo";
+import { BackButton, ShareButton } from "./share-button";
 
 /** Header da página do veículo: menus suspensos. */
-export function HeaderPdp({ tenant }: { tenant: Tenant }) {
+export function HeaderPdp({ tenant, vehicle }: { tenant: Tenant; vehicle?: { id: number; title: string } }) {
   const wa = (text: string) =>
     tenant.whatsapp ? `https://wa.me/${tenant.whatsapp}?text=${encodeURIComponent(text)}` : "/estoque";
 
@@ -34,7 +36,17 @@ export function HeaderPdp({ tenant }: { tenant: Tenant }) {
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur">
-      <div className="flex h-[88px] items-center gap-8 px-4 sm:px-6 lg:px-10 2xl:px-14">
+      {vehicle && (
+        <div className="flex h-14 items-center gap-1 px-2 lg:hidden">
+          <BackButton />
+          <Logo tenant={tenant} className="ml-1 [&_img]:h-7" />
+          <div className="ml-auto flex items-center">
+            <FavoriteButton id={vehicle.id} plain className="size-10" />
+            <ShareButton title={vehicle.title} />
+          </div>
+        </div>
+      )}
+      <div className={vehicle ? "hidden h-[88px] items-center gap-8 px-4 sm:px-6 lg:flex lg:px-10 2xl:px-14" : "flex h-[88px] items-center gap-8 px-4 sm:px-6 lg:px-10 2xl:px-14"}>
         <Logo tenant={tenant} className="[&_img]:h-9 sm:[&_img]:h-10" />
         <nav className="hidden flex-1 items-center justify-center gap-[clamp(1.5rem,4vw,4rem)] font-heading text-[17px] text-[#2e2e38] lg:flex">
           {MENUS.map((m) => (

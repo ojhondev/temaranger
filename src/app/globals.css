@@ -168,3 +168,7 @@
 .torque-tour .driver-popover-next-btn { background: #ff3916; border-color: #ff3916; color: #fff; }
 .torque-tour .driver-popover-next-btn:hover { background: #3d55c9; }
 .torque-tour .driver-popover-navigation-btns button + button { margin-left: 6px; }
+
+/* Site da loja com toque de app no celular: sem flash azul ao tocar e sem atraso de duplo toque. */
+.ranger-app { -webkit-tap-highlight-color: transparent; }
+.ranger-app a, .ranger-app button, .ranger-app input, .ranger-app select { touch-action: manipulation; }

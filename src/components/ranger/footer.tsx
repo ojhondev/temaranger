@@ -1,19 +1,16 @@
 import Link from "next/link";
-import { Mail, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 import type { Store, Tenant } from "@/db/schema";
 import type { ResolvedSettings } from "@/lib/settings";
+import { cn } from "@/lib/utils";
+
+import { SocialLinks } from "./social-links";
 
 export function Footer({ tenant, stores, settings: st }: { tenant: Tenant; stores: Store[]; settings: ResolvedSettings }) {
-  const socials = [
-    ["Instagram", st.instagram],
-    ["Facebook", st.facebook],
-    ["YouTube", st.youtube],
-  ].filter(([, href]) => href) as [string, string][];
-
   return (
-    <footer id="lojas" className="mt-16 border-t bg-[#f5f6f7]">
-      <div className="grid gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.2fr_2fr] lg:px-10 2xl:px-14">
+    <footer id="lojas" className="mt-16 border-t bg-[#f5f6f7] pb-[calc(64px+env(safe-area-inset-bottom))] md:pb-0">
+      <div className={cn("grid gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.2fr_2fr] lg:px-10 2xl:px-14", st.layout === "boxed" && "mx-auto max-w-[1360px]")}>
         <div>
           {tenant.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -34,25 +31,33 @@ export function Footer({ tenant, stores, settings: st }: { tenant: Tenant; store
               </a>
             )}
           </div>
-          <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold">
+          <SocialLinks settings={st} whatsapp={tenant.whatsapp} className="mt-5" />
+          <nav className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
             <Link href="/estoque" className="hover:text-primary">
               Carros
             </Link>
             <Link href="/estoque?tipo=motos" className="hover:text-primary">
               Motos
             </Link>
-            {socials.map(([label, href]) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
-                {label}
-              </a>
-            ))}
-          </div>
+            <Link href="/favoritos" className="hover:text-primary">
+              Favoritos
+            </Link>
+          </nav>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {stores.map((s) => (
             <div key={s.id} className="text-sm">
               <p className="font-heading font-semibold">{s.name}</p>
-              <p className="text-muted-foreground">{s.address}</p>
+              {s.address && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.city}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 flex items-start gap-1.5 text-muted-foreground hover:text-primary"
+                >
+                  <MapPin className="mt-0.5 size-4 shrink-0" /> {s.address}
+                </a>
+              )}
               <p className="text-muted-foreground">{s.city}</p>
               {s.whatsapp && (
                 <a

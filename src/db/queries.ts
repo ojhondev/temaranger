@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, ilike, lte, ne, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, inArray, lte, ne, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "./index";
 import { leads, listings, stores, users, vehicles } from "./schema";
@@ -238,4 +238,15 @@ export async function getDashboard(tenantId: number) {
   ]);
 
   return { byChannel, bySeller, stock: stock.map((s) => s.vehicle), totals: totals[0] };
+}
+
+/** Favoritos do visitante (ids guardados no aparelho), na ordem em que foram salvos. */
+export async function listVehiclesByIds(tenantId: number, ids: number[]) {
+  if (!ids.length) return [];
+  const rows = await db
+    .select({ vehicle: vehicles, store: stores })
+    .from(vehicles)
+    .innerJoin(stores, eq(stores.id, vehicles.storeId))
+    .where(and(eq(vehicles.tenantId, tenantId), ne(vehicles.status, "sold"), inArray(vehicles.id, ids.slice(0, 100))));
+  return ids.map((id) => rows.find((r) => r.vehicle.id === id)).filter((r) => r !== undefined);
 }

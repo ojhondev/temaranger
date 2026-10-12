@@ -72,7 +72,47 @@ export type TenantSettings = {
   financingRate?: number;
   sellBanner?: { title?: string; subtitle?: string; cta?: string };
   sections?: Partial<Record<"models" | "financing" | "promos" | "sell" | "zeroKm" | "bodyTypes", boolean>>;
+  /** Largura do site: tela inteira (padrão do tema) ou centralizado com margens (boxed). */
+  layout?: "full" | "boxed";
+  /** Ícone da aba do navegador (PNG quadrado). Sem ele, usa as iniciais da loja na cor dela. */
+  faviconUrl?: string;
+  tiktok?: string;
+  linkedin?: string;
+  /** Faixa fina acima do header (aviso, campanha, horário). */
+  topBar?: { enabled?: boolean; text?: string; linkLabel?: string; href?: string; bg?: string; fg?: string; dismissible?: boolean };
+  /** Pop-up ao abrir o site. */
+  popup?: {
+    enabled?: boolean;
+    title?: string;
+    text?: string;
+    imageUrl?: string;
+    /** link: abre `href`; whatsapp: conversa com a loja; lead: pede nome e WhatsApp e vira lead no CRM. */
+    action?: PopupAction;
+    ctaLabel?: string;
+    href?: string;
+    delaySeconds?: number;
+    /** De quanto em quanto tempo o mesmo visitante vê de novo. */
+    frequency?: "always" | "session" | "day" | "week";
+    pages?: "home" | "all";
+  };
+  /** Área de contato da página do veículo. */
+  leadFlow?: {
+    primary?: LeadAction;
+    secondary?: LeadAction | "none";
+    /** Pede nome e WhatsApp antes de abrir o WhatsApp ou mostrar o telefone. */
+    askData?: boolean;
+    /** Depois de enviar o formulário: confirmação na tela ou já abrir o WhatsApp do vendedor. */
+    afterForm?: "message" | "whatsapp";
+    emailRequired?: boolean;
+    title?: string;
+    labels?: Partial<Record<LeadAction, string>>;
+  };
+  /** Card abaixo do preço na página do veículo (selo de referência, comparação com a FIPE). */
+  priceReference?: { enabled?: boolean; title?: string; text?: string; imageUrl?: string; href?: string; showFipe?: boolean };
 };
+
+export type PopupAction = "link" | "whatsapp" | "lead" | "none";
+export type LeadAction = "form" | "whatsapp" | "call";
 
 /** Loja (unidade) de uma concessionária. */
 export const stores = app.table(

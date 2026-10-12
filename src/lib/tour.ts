@@ -137,7 +137,7 @@ export const TOURS: Tour[] = [
     name: "Identidade do site",
     route: (p) => p === "/torque/site",
     steps: [
-      { target: "site-abas", title: "O site inteiro em abas", text: "Identidade, banners, página inicial, contato e lojas. Tudo que você salvar aparece no site na hora.", side: "bottom" },
+      { target: "site-abas", title: "O site inteiro em abas", text: "Identidade, banners, aparência e pop-up, página inicial, página do veículo, contato, lojas e domínio. Tudo que você salvar aparece no site na hora.", side: "bottom" },
       { target: "site-logo", title: "Logo e cor da marca", text: "Suba o logo em PNG ou SVG e escolha a cor principal: botões, preços e destaques mudam juntos.", side: "bottom" },
     ],
   },
@@ -148,6 +148,25 @@ export const TOURS: Tour[] = [
     steps: [
       { target: "banner-novo", title: "Banner de oferta novo", text: "Suba a imagem (ideal 1600×500), escreva o título e para onde o botão leva.", side: "bottom" },
       { target: "banner-lista", title: "Ordem e vitrine", text: "Use as setas para mudar a ordem e o botão para tirar do ar sem apagar.", side: "top" },
+    ],
+  },
+  {
+    id: "aparencia",
+    name: "Aparência e pop-up",
+    route: (p) => p === "/torque/site/aparencia",
+    steps: [
+      { target: "aparencia-largura", title: "Tela inteira ou centralizado", text: "Escolha se o site ocupa a largura toda do computador (<b>full width</b>) ou fica numa coluna central (<b>boxed</b>). No celular é sempre tela cheia.", side: "bottom" },
+      { target: "aparencia-barra", title: "Barra superior", text: "Uma faixa fina acima do topo do site para avisos e campanhas, com link e cores da sua escolha.", side: "top" },
+      { target: "aparencia-popup", title: "Pop-up de abertura", text: "Defina o conteúdo, o que o botão faz (captar contato, WhatsApp ou link), quantos segundos espera para abrir e com que frequência aparece. Contatos captados viram lead no CRM.", side: "top" },
+    ],
+  },
+  {
+    id: "pagina-veiculo",
+    name: "Página do veículo",
+    route: (p) => p === "/torque/site/veiculo",
+    steps: [
+      { target: "veiculo-contato", title: "Os botões de contato", text: "Escolha a ação principal (formulário, WhatsApp ou ligação), um segundo botão e os textos. Todo contato vai para o vendedor da vez no rodízio.", side: "bottom" },
+      { target: "veiculo-referencia", title: "Referência de preço", text: "Card abaixo do preço com sua imagem ou selo e a comparação automática com a <b>FIPE</b> quando ela está no cadastro do carro.", side: "top" },
     ],
   },
   {
