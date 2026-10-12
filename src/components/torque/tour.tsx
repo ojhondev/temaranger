@@ -204,6 +204,19 @@ function HelpDrawer({
             </div>
           </section>
 
+          <a
+            href="https://ajuda.softmotors.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between gap-3 rounded-xl border border-[#e2e2e8] bg-white p-5 hover:border-primary"
+          >
+            <span>
+              <span className="block font-heading text-lg font-semibold">Central de Ajuda</span>
+              <span className="mt-1 block text-sm text-[#6b6b76]">Passo a passo de todas as funções do Torque, por módulo.</span>
+            </span>
+            <span className="shrink-0 text-sm font-semibold text-primary">Abrir ↗</span>
+          </a>
+
           <section className="rounded-xl bg-[#2a2a33] p-5 text-white">
             <p className="font-heading text-lg font-semibold">Ainda com dúvida?</p>
             <p className="mt-1 text-sm text-white/75">O time da SoftMotors responde no WhatsApp em horário comercial.</p>

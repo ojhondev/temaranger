@@ -68,6 +68,13 @@ Sem foto, o veículo aparece como ilustração SVG por carroceria (`src/componen
 6. Cuidado ao gerar código por script Node com template string: `\\D` vira `D` e quebra
    regex (já aconteceu com o filtro de números e a validação de e-mail).
 
+## Central de Ajuda
+
+- `ajuda.softmotors.com.br` (o middleware reescreve para as rotas de `src/app/ajuda`; em
+  qualquer outro endereço ela fica em `/ajuda`). Conteúdo em `src/content/ajuda.ts`.
+- **Toda função nova ou alterada no Torque deve atualizar o artigo correspondente** (e o
+  tour em `src/lib/tour.ts`), com os nomes exatos dos botões e telas.
+
 ## Dev
 
 - Dev server: preview `temaranger` (porta 3018, em `A:/Velo/.claude/launch.json`).

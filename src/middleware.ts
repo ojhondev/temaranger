@@ -2,18 +2,29 @@ import { jwtVerify } from "jose";
 import { NextResponse, type NextRequest } from "next/server";
 
 const COOKIE = "torque_session";
+const HELP_HOST = `ajuda.${process.env.PLATFORM_DOMAIN ?? "softmotors.com.br"}`;
 
 /**
- * Portão do Torque (painel da loja): sem sessão válida, vai para o login.
- * A checagem completa (usuário ativo, loja certa, papel) acontece no servidor, em getSession.
+ * 1. Central de Ajuda: `ajuda.softmotors.com.br/x` serve as páginas de `/ajuda/x`.
+ * 2. Portão do Torque (painel da loja): sem sessão válida, vai para o login.
+ *    A checagem completa (usuário ativo, loja certa, papel) acontece no servidor, em getSession.
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const host = (req.headers.get("x-forwarded-host") ?? req.headers.get("host") ?? "").split(":")[0].toLowerCase();
 
+  if (host === HELP_HOST) {
+    if (pathname === "/ajuda" || pathname.startsWith("/ajuda/")) {
+      return NextResponse.redirect(new URL(pathname.replace(/^\/ajuda/, "") || "/", req.url), 308);
+    }
+    return NextResponse.rewrite(new URL(`/ajuda${pathname === "/" ? "" : pathname}${req.nextUrl.search}`, req.url));
+  }
+
+  const isTorque = pathname === "/torque" || pathname.startsWith("/torque/");
   if (pathname === "/painel" || pathname.startsWith("/painel/")) {
     return NextResponse.redirect(new URL(pathname.replace(/^\/painel/, "/torque"), req.url));
   }
-  if (pathname.startsWith("/torque/entrar")) return NextResponse.next();
+  if (!isTorque || pathname.startsWith("/torque/entrar")) return NextResponse.next();
 
   const token = req.cookies.get(COOKIE)?.value;
   const secret = process.env.SESSION_SECRET;
@@ -28,4 +39,5 @@ export async function middleware(req: NextRequest) {
   return NextResponse.redirect(login);
 }
 
-export const config = { matcher: ["/painel/:path*", "/painel", "/torque/:path*", "/torque"] };
+// Tudo menos arquivos estáticos e APIs (a Central de Ajuda precisa ver qualquer caminho).
+export const config = { matcher: ["/((?!_next/|api/|.*\\.[a-z0-9]+$).*)"] };
