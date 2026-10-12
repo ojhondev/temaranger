@@ -2,12 +2,11 @@ import { notFound } from "next/navigation";
 import { Flag, Info, MessageCircle, Video } from "lucide-react";
 
 import { FavoriteButton } from "@/components/ranger/favorite-button";
-import { HeaderPdp } from "@/components/ranger/header-pdp";
-import { MobileGallery } from "@/components/ranger/mobile-gallery";
+import { HeaderHome } from "@/components/ranger/header-home";
 import { PdpActionBar, PdpContactCard, PdpMobilePrice } from "@/components/ranger/pdp-contact";
-import { PdpGallery } from "@/components/ranger/pdp-gallery";
 import { PriceReference } from "@/components/ranger/price-reference";
 import { Rail } from "@/components/ranger/rail";
+import { VehicleGallery } from "@/components/ranger/vehicle-gallery";
 import { VehicleCard } from "@/components/site/vehicle-card";
 import { BODY_LABEL } from "@/config/ranger";
 import { getPublicVehicle, listSimilar } from "@/db/queries";
@@ -70,13 +69,12 @@ export default async function VehiclePage({ params, searchParams }: Props) {
 
   return (
     <>
-      <HeaderPdp tenant={tenant} vehicle={{ id: v.id, title }} />
+      <HeaderHome tenant={tenant} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <main className="grid grid-cols-[minmax(0,1fr)] gap-8 px-4 sm:px-6 pb-10 lg:grid-cols-[minmax(0,1fr)_400px] lg:px-10 2xl:px-14">
+      <main className="grid grid-cols-[minmax(0,1fr)] gap-8 px-4 pb-10 sm:px-6 sm:pt-2 lg:grid-cols-[minmax(0,1fr)_400px] lg:px-10 2xl:px-14">
         <div className="flex min-w-0 flex-col gap-5">
-          <MobileGallery vehicle={v} />
-          <PdpGallery vehicle={v} />
+          <VehicleGallery vehicle={v} title={title} />
 
           {/* Celular: resumo como nos apps de classificados; o contato fica na barra fixa do rodapé */}
           <div className="flex flex-col gap-4 lg:hidden">

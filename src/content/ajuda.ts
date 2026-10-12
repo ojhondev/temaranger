@@ -654,7 +654,7 @@ export const MODULES: HelpModule[] = [
             list: [
               "**Barra de abas** fixa: Início, Buscar, Favoritos, Vender e Menu.",
               "**Busca rápida** na página inicial por tipo, marca e faixa de preço.",
-              "**Galeria** que desliza com o dedo e mostra o contador de fotos.",
+              "**Galeria** que desliza com o dedo; um toque abre as fotos em tela cheia, com zoom (dois toques ou dois dedos) e miniaturas.",
               "**Barra de contato** fixa na página do veículo, com os botões que você escolheu no Torque.",
               "**Favoritos:** o cliente salva carros no coração e vê a lista na aba Favoritos.",
             ],
