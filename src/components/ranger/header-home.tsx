@@ -27,7 +27,7 @@ export function HeaderHome({ tenant, q, chips = false }: { tenant: Tenant; q?: s
       <div className="flex h-16 items-center gap-3 px-4 sm:h-[72px] sm:gap-4 sm:px-6 lg:gap-6 lg:px-10 2xl:px-14">
         <Logo tenant={tenant} />
 
-        <form action="/estoque" role="search" className="flex h-11 min-w-0 flex-1 items-center rounded-full bg-[#f2f2f4] pl-4 pr-1.5 lg:max-w-[520px]">
+        <form action="/estoque" role="search" data-tour="site-busca" className="flex h-11 min-w-0 flex-1 items-center rounded-full bg-[#f2f2f4] pl-4 pr-1.5 lg:max-w-[520px]">
           <input
             name="q"
             defaultValue={q}
@@ -78,7 +78,7 @@ export function HeaderHome({ tenant, q, chips = false }: { tenant: Tenant; q?: s
       </div>
 
       {chips && (
-        <nav className="flex gap-2 overflow-x-auto px-4 pb-3 scrollbar-none md:hidden" aria-label="Atalhos">
+        <nav data-tour="site-chips" className="flex gap-2 overflow-x-auto px-4 pb-3 scrollbar-none md:hidden" aria-label="Atalhos">
           {CHIPS.map(({ href, label, icon: Icon }) => (
             <a
               key={label}

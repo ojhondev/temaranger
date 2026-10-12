@@ -9,7 +9,7 @@ export const PLATFORM_DOMAIN = process.env.PLATFORM_DOMAIN ?? "softmotors.com.br
 /** Subdomínios que não podem virar loja. */
 export const RESERVED_SLUGS = new Set([
   "www", "app", "api", "admin", "torque", "painel", "mail", "email", "smtp", "ftp", "cpanel",
-  "webmail", "blog", "suporte", "ajuda", "status", "docs", "demo-softmotors", "softmotors",
+  "webmail", "blog", "suporte", "ajuda", "status", "docs", "demo", "template", "demo-softmotors", "softmotors",
 ]);
 
 export const platformHost = (slug: string) => `${slug}.${PLATFORM_DOMAIN}`;

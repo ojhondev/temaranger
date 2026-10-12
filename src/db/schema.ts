@@ -56,6 +56,9 @@ export const tenants = app.table("tenants", {
   domainVerifiedAt: timestamp({ withTimezone: true }),
   /** Tudo o que a loja edita no Torque sem depender da SoftMotors (textos, contatos, SEO…). */
   settings: jsonb().$type<TenantSettings>().notNull().default({}),
+  /** Loja de demonstração (demo.softmotors.com.br), criada pelo visitante e apagada ao expirar. */
+  sandbox: boolean().notNull().default(false),
+  expiresAt: timestamp({ withTimezone: true }),
   ...timestamps,
 });
 
@@ -290,6 +293,32 @@ export const marketplaceAccounts = app.table(
   (t) => [uniqueIndex().on(t.tenantId, t.marketplace)],
 );
 
+/**
+ * Leads da SoftMotors: quem pediu a demonstração em tempo real (LP → demo.softmotors.com.br).
+ * Funil comercial da plataforma, visível só para o master.
+ */
+export const demoLeads = app.table(
+  "demo_leads",
+  {
+    id: serial().primaryKey(),
+    whatsapp: text().notNull(),
+    contactName: text(),
+    dealership: text(),
+    city: text(),
+    primaryColor: text(),
+    logoUrl: text(),
+    /** Loja de demonstração criada (some quando ela expira). */
+    tenantId: integer().references(() => tenants.id, { onDelete: "set null" }),
+    /** captured → started → site → torque */
+    stage: text().notNull().default("captured"),
+    vehiclesAdded: integer().notNull().default(0),
+    torqueOpenedAt: timestamp({ withTimezone: true }),
+    source: text(),
+    ...timestamps,
+  },
+  (t) => [index().on(t.createdAt)],
+);
+
 export type Tenant = typeof tenants.$inferSelect;
 export type Store = typeof stores.$inferSelect;
 export type User = typeof users.$inferSelect;
@@ -298,6 +327,7 @@ export type Listing = typeof listings.$inferSelect;
 export type Lead = typeof leads.$inferSelect;
 export type Banner = typeof banners.$inferSelect;
 export type MarketplaceAccount = typeof marketplaceAccounts.$inferSelect;
+export type DemoLead = typeof demoLeads.$inferSelect;
 export type UserRole = (typeof userRole.enumValues)[number];
 export type Marketplace = (typeof marketplace.enumValues)[number];
 export type LeadChannel = (typeof leadChannel.enumValues)[number];

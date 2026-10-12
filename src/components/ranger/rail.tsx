@@ -27,7 +27,8 @@ export function Rail({
 
   const measure = useCallback(() => {
     const el = ref.current;
-    if (!el) return;
+    // Sem largura (aba oculta, elemento ainda sem layout) a divisão dá Infinity: espera o próximo resize.
+    if (!el || el.clientWidth === 0) return;
     const total = Math.max(1, Math.ceil(el.scrollWidth / el.clientWidth - 0.05));
     setPages(total);
     setPage(Math.round(el.scrollLeft / el.clientWidth));

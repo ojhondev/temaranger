@@ -1,11 +1,13 @@
 import { and, eq, lt, ne, sql } from "drizzle-orm";
 
+import { DemoBanner } from "@/components/torque/demo-banner";
 import { MobileNav, Sidebar } from "@/components/torque/sidebar";
 import { Topbar, type Alert } from "@/components/torque/topbar";
 import { TourProvider } from "@/components/torque/tour";
 import { db } from "@/db";
 import { leads, listings, vehicles } from "@/db/schema";
 import { isManager, requireSession } from "@/lib/auth";
+import { demoVehiclesLeft } from "@/lib/sandbox";
 import { getTenant } from "@/lib/tenant";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +36,7 @@ export default async function TorqueLayout({ children }: { children: React.React
       .where(and(eq(vehicles.tenantId, tenant.id), ne(vehicles.status, "sold"), lt(vehicles.stockedAt, sixtyDaysAgo))),
   ]);
 
+  const demoLeft = tenant.sandbox ? await demoVehiclesLeft(tenant.id) : null;
   const alerts: Alert[] = [];
   if (fresh.n) alerts.push({ label: `${fresh.n} ${fresh.n === 1 ? "lead aguardando" : "leads aguardando"} resposta`, href: "/torque/crm/leads?status=new", tone: "blue" });
   if (manager && errors.n) alerts.push({ label: `${errors.n} ${errors.n === 1 ? "anúncio" : "anúncios"} com erro nos portais`, href: "/torque/marketplaces", tone: "red" });
@@ -54,7 +57,10 @@ export default async function TorqueLayout({ children }: { children: React.React
             newLeads={fresh.n}
             alerts={alerts}
           />
-          <main className="flex-1 px-4 pb-24 pt-6 md:px-8 md:pb-10">{children}</main>
+          <main className="flex-1 px-4 pb-24 pt-6 md:px-8 md:pb-10">
+            {demoLeft !== null && <DemoBanner storeName={tenant.name} left={demoLeft} salesWhatsapp={process.env.SOFTMOTORS_WHATSAPP ?? null} />}
+            {children}
+          </main>
           <footer className="flex items-center justify-between border-t border-[#e6e6ec] px-4 py-4 text-xs text-[#6b6b76] md:px-8">
             <span>© {new Date().getFullYear()} SoftMotors. Todos os direitos reservados.</span>
             {/* eslint-disable-next-line @next/next/no-img-element */}

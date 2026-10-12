@@ -13,7 +13,7 @@ export function MobileGallery({ vehicle: v }: { vehicle: Vehicle }) {
   const total = Math.max(1, v.photos.length);
 
   return (
-    <div className="relative -mx-4 sm:hidden">
+    <div data-tour="pdp-galeria" className="relative -mx-4 sm:hidden">
       <div
         ref={ref}
         onScroll={(e) => setI(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}

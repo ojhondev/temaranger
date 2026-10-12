@@ -79,7 +79,7 @@ export function MobileTabBar({ tenantName, whatsapp, settings }: Props) {
         </div>
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-[61] flex h-[calc(64px+env(safe-area-inset-bottom))] border-t border-[#ececf0] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+      <nav data-tour="site-abas" className="fixed inset-x-0 bottom-0 z-[61] flex h-[calc(64px+env(safe-area-inset-bottom))] border-t border-[#ececf0] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
         {tabs.map(({ href, label, icon: Icon, active }) => (
           <Link key={href} href={href} className={cn(tab, active && !menu ? "text-primary" : "text-[#4a4a55]")}>
             <Icon className={cn("size-6", active && !menu && href === "/favoritos" && "fill-primary")} strokeWidth={active && !menu ? 2.4 : 1.8} />

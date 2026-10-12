@@ -9,6 +9,7 @@ import { tenants } from "@/db/schema";
 import { requireSession } from "@/lib/auth";
 import { PLATFORM_DOMAIN, apexOf, normalizeDomain } from "@/lib/platform";
 import { addDomain, dnsReady, getDomain, removeDomain, vercelConfigured } from "@/lib/vercel-domains";
+import { demoVehiclesLeft } from "@/lib/sandbox";
 
 const MANAGERS = ["master", "manager"] as const;
 const back = (q: string) => redirect(`/torque/site/dominio?${q}`);
@@ -19,6 +20,7 @@ const back = (q: string) => redirect(`/torque/site/dominio?${q}`);
  */
 export async function connectDomain(fd: FormData) {
   const s = await requireSession([...MANAGERS]);
+  if ((await demoVehiclesLeft(s.tenantId)) !== null) back(`erro=${encodeURIComponent("Na demonstração o domínio próprio fica desligado. Ao contratar, você conecta o seu em 2 minutos.")}`);
   const typed = normalizeDomain(String(fd.get("domain") ?? ""));
   if (!typed) back(`erro=${encodeURIComponent("Domínio inválido. Ex.: www.sualoja.com.br")}`);
   if (typed!.endsWith(PLATFORM_DOMAIN)) back(`erro=${encodeURIComponent("Esse já é o endereço da plataforma.")}`);

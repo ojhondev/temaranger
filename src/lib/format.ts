@@ -10,7 +10,8 @@ export const brl = (v: number) => brlFmt.format(v);
 export const km = (v: number) => `${v.toLocaleString("pt-BR")} km`;
 
 export function daysSince(date: Date) {
-  return Math.floor((Date.now() - date.getTime()) / 86_400_000);
+  // max(0): o relógio do banco pode estar segundos à frente do servidor.
+  return Math.max(0, Math.floor((Date.now() - date.getTime()) / 86_400_000));
 }
 
 export function slugify(s: string) {

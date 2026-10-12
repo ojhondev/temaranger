@@ -8,6 +8,7 @@ import { db } from "@/db";
 import { users, type User, type UserRole } from "@/db/schema";
 
 import { PLATFORM_DOMAIN } from "./platform";
+import { isDemoHost } from "./sandbox";
 import { getTenant, requestHost } from "./tenant";
 
 export const SESSION_COOKIE = "torque_session";
@@ -15,11 +16,9 @@ const SESSION_DAYS = 30;
 
 export { hashPassword, verifyPassword } from "./password";
 
-export function sessionKey() {
-  const secret = process.env.SESSION_SECRET;
-  if (!secret || secret.length < 32) throw new Error("SESSION_SECRET ausente ou curta (mín. 32 caracteres).");
-  return new TextEncoder().encode(secret);
-}
+import { sessionKey } from "./session-key";
+
+export { sessionKey };
 
 export async function createSession(userId: number) {
   const token = await new SignJWT({ uid: userId })
@@ -43,7 +42,8 @@ export async function createSession(userId: number) {
  */
 async function cookieDomain() {
   const host = await requestHost();
-  return host.endsWith(`.${PLATFORM_DOMAIN}`) ? { domain: `.${PLATFORM_DOMAIN}` } : {};
+  // A demonstração fica com cookie próprio, sem derrubar a sessão do master nas outras lojas.
+  return host.endsWith(`.${PLATFORM_DOMAIN}`) && !isDemoHost(host) ? { domain: `.${PLATFORM_DOMAIN}` } : {};
 }
 
 export async function destroySession() {
@@ -60,22 +60,22 @@ export type Session = { user: User; tenantId: number; role: UserRole };
  * qualquer loja; gestor e vendedor só na própria. Usuário desativado perde o acesso na hora.
  */
 export const getSession = cache(async (): Promise<Session | null> => {
-  const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (!token) return null;
-  try {
-    const { payload } = await jwtVerify(token, sessionKey());
-    if (typeof payload.uid !== "number") return null;
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(and(eq(users.id, payload.uid), eq(users.active, true)));
-    if (!user || !user.passwordHash) return null;
-    const tenant = await getTenant();
-    if (user.role !== "master" && (user.tenantId !== tenant.id || !tenant.active)) return null;
-    return { user, tenantId: tenant.id, role: user.role };
-  } catch {
-    return null;
+  // Pode haver dois cookies (o da plataforma e o da demonstração): vale o que tem acesso a esta loja.
+  for (const { value: token } of (await cookies()).getAll(SESSION_COOKIE)) {
+    try {
+      const { payload } = await jwtVerify(token, sessionKey());
+      if (typeof payload.uid !== "number") continue;
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(and(eq(users.id, payload.uid), eq(users.active, true)));
+      if (!user || !user.passwordHash) continue;
+      const tenant = await getTenant();
+      if (user.role !== "master" && (user.tenantId !== tenant.id || !tenant.active)) continue;
+      return { user, tenantId: tenant.id, role: user.role };
+    } catch {}
   }
+  return null;
 });
 
 /** Exige login (e, opcionalmente, um dos papéis). Sem permissão, volta ao início do Torque. */

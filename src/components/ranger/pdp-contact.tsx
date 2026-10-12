@@ -218,7 +218,7 @@ export function PdpMobilePrice({ price, rate }: { price: number; rate: number })
 export function PdpActionBar(common: Common) {
   const actions = actionsOf(common.flow);
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#ececf0] bg-white/95 px-4 pb-[calc(10px+env(safe-area-inset-bottom))] pt-2.5 backdrop-blur lg:hidden">
+    <div data-tour="pdp-contato" className="fixed inset-x-0 bottom-0 z-50 border-t border-[#ececf0] bg-white/95 px-4 pb-[calc(10px+env(safe-area-inset-bottom))] pt-2.5 backdrop-blur lg:hidden">
       <div className={cn("grid gap-2.5", actions.length > 1 && "grid-cols-2")}>
         {actions.map((a, i) => (
           <ActionButton key={a} kind={a} primary={i === 0} {...common} />

@@ -9,6 +9,7 @@ import { listings, stores, vehicles, vehicleStatus, type Marketplace, type Vehic
 import { requireSession } from "@/lib/auth";
 import { slugify } from "@/lib/format";
 import { ALL_MARKETPLACES, applyAccountRules, setListing, syncVehicle } from "@/lib/marketplaces";
+import { countDemoVehicle, demoVehiclesLeft } from "@/lib/sandbox";
 
 const MANAGERS = ["master", "manager"] as const;
 const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
@@ -70,6 +71,7 @@ export async function saveVehicle(fd: FormData) {
   }
 
   let vehicleId = id;
+  if (!id && (await demoVehiclesLeft(s.tenantId)) === 0) redirect("/torque/estoque/novo?limite=1");
   if (id) {
     await db.update(vehicles).set(data).where(and(eq(vehicles.id, id), eq(vehicles.tenantId, s.tenantId)));
   } else {
@@ -79,6 +81,7 @@ export async function saveVehicle(fd: FormData) {
       .values({ ...data, tenantId: s.tenantId, slug })
       .returning({ id: vehicles.id });
     vehicleId = v.id;
+    await countDemoVehicle(s.tenantId);
     await db.insert(listings).values(ALL_MARKETPLACES.map((m) => ({ tenantId: s.tenantId, vehicleId: v.id, marketplace: m, enabled: false })));
     // Portais conectados com "todo o estoque" já recebem o carro novo.
     await applyAccountRules(s.tenantId, [v.id]);

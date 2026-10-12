@@ -1,7 +1,7 @@
 /**
- * Dados de demonstração do tema Ranger: concessionária "demo" em São Paulo, 2 lojas,
+ * Dados de demonstração do tema Ranger: concessionária "template" em São Paulo, 2 lojas,
  * 4 vendedores, estoque de carros e motos e leads.
- * Uso: `npm run db:seed`. Não faz nada se o tenant "demo" já existir.
+ * Uso: `npm run db:seed`. Não faz nada se o tenant "template" já existir.
  */
 import { config } from "dotenv";
 config({ path: ".env.local", quiet: true });
@@ -80,7 +80,7 @@ const BUYERS = [
 const CHANNELS: LeadChannel[] = ["site", "whatsapp", "olx", "webmotors", "mercadolivre", "olx", "whatsapp", "webmotors"];
 
 async function main() {
-  const [existing] = await db.select().from(tenants).where(eq(tenants.slug, "demo"));
+  const [existing] = await db.select().from(tenants).where(eq(tenants.slug, "template"));
   if (existing) {
     console.log("Tenant demo já existe — nada a fazer.");
     return;
@@ -89,7 +89,7 @@ async function main() {
   const [t] = await db
     .insert(tenants)
     .values({
-      slug: "demo",
+      slug: "template",
       name: "SoftMotors",
       logoUrl: "/brand/softmotors-logo.png",
       primaryColor: "#ff3916",

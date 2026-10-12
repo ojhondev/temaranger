@@ -13,7 +13,7 @@ async function main() {
   const { defaultBanners } = await import("../src/lib/provision");
   const { applyAccountRules } = await import("../src/lib/marketplaces");
 
-  const [t] = await db.select().from(tenants).where(eq(tenants.slug, "demo"));
+  const [t] = await db.select().from(tenants).where(eq(tenants.slug, "template"));
   if (!t) throw new Error("Rode npm run db:seed antes.");
 
   const existing = await db.select().from(banners).where(eq(banners.tenantId, t.id));

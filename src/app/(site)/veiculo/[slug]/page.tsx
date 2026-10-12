@@ -198,7 +198,7 @@ export default async function VehiclePage({ params, searchParams }: Props) {
           )}
         </div>
 
-        <aside id="contato" className="hidden scroll-mt-24 lg:sticky lg:top-[104px] lg:mt-9 lg:flex lg:flex-col lg:gap-4 lg:self-start">
+        <aside id="contato" data-tour="pdp-contato" className="hidden scroll-mt-24 lg:sticky lg:top-[104px] lg:mt-9 lg:flex lg:flex-col lg:gap-4 lg:self-start">
           <PdpContactCard {...contact} price={v.price} rate={st.financingRate} />
           <PriceReference cfg={st.priceReference} price={v.price} fipe={v.fipePrice} />
         </aside>

@@ -21,7 +21,7 @@ async function main() {
 
   let tenantId: number | null = null;
   if (role !== "master") {
-    const [t] = await db.select().from(tenants).where(eq(tenants.slug, process.env.TORQUE_TENANT ?? "demo"));
+    const [t] = await db.select().from(tenants).where(eq(tenants.slug, process.env.TORQUE_TENANT ?? "template"));
     if (!t) throw new Error("Tenant não encontrado.");
     tenantId = t.id;
   }

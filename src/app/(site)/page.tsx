@@ -36,26 +36,30 @@ export default async function Home() {
       <HeaderHome tenant={tenant} chips />
 
       <main className="flex flex-col gap-8 px-4 pb-8 pt-2 sm:gap-12 sm:px-6 sm:pt-6 lg:px-10 2xl:px-14">
-        <HeroCarousel banners={hero} />
+        <div data-tour="site-banner">
+          <HeroCarousel banners={hero} />
+        </div>
         <QuickSearch brands={brands} />
 
         {show.models && (
-          <ModelsSection
-            models={models.map((v) => ({
-              brand: v.brand,
-              model: v.model,
-              body: v.bodyType,
-              color: v.color,
-              photo: v.photos[0] ?? null,
-              logo: brandLogo(v.brand),
-            }))}
-          />
+          <div data-tour="site-modelos">
+            <ModelsSection
+              models={models.map((v) => ({
+                brand: v.brand,
+                model: v.model,
+                body: v.bodyType,
+                color: v.color,
+                photo: v.photos[0] ?? null,
+                logo: brandLogo(v.brand),
+              }))}
+            />
+          </div>
         )}
       </main>
 
       <div className="flex flex-col gap-14 px-4 pb-8 sm:px-6 lg:px-10 2xl:px-14">
         {show.financing && financing.length > 0 && (
-          <section>
+          <section data-tour="site-ofertas">
             <h2 className="text-base font-bold text-[#1f1f1f]">Carros para financiar com taxas especiais</h2>
             <Rail className="mt-3">
               {financing.map((r) => (
@@ -70,7 +74,9 @@ export default async function Home() {
         )}
 
         {show.sell && (
-          <SellBanner whatsapp={tenant.whatsapp} title={st.sellBanner.title} subtitle={st.sellBanner.subtitle} cta={st.sellBanner.cta} />
+          <div data-tour="site-vender">
+            <SellBanner whatsapp={tenant.whatsapp} title={st.sellBanner.title} subtitle={st.sellBanner.subtitle} cta={st.sellBanner.cta} />
+          </div>
         )}
 
         {show.zeroKm && recent.length > 0 && (

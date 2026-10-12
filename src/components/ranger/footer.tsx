@@ -9,7 +9,7 @@ import { SocialLinks } from "./social-links";
 
 export function Footer({ tenant, stores, settings: st }: { tenant: Tenant; stores: Store[]; settings: ResolvedSettings }) {
   return (
-    <footer id="lojas" className="mt-16 border-t bg-[#f5f6f7] pb-[calc(64px+env(safe-area-inset-bottom))] md:pb-0">
+    <footer id="lojas" data-tour="site-rodape" className="mt-16 border-t bg-[#f5f6f7] pb-[calc(64px+env(safe-area-inset-bottom))] md:pb-0">
       <div className={cn("grid gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.2fr_2fr] lg:px-10 2xl:px-14", st.layout === "boxed" && "mx-auto max-w-[1360px]")}>
         <div>
           {tenant.logoUrl ? (

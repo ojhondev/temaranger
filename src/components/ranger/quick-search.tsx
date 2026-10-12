@@ -4,7 +4,7 @@ import { CarFront, ChevronDown, Tag } from "lucide-react";
 export function QuickSearch({ brands }: { brands: string[] }) {
   const select = "h-12 w-full appearance-none rounded-xl border border-[#2e2e38] bg-white pl-11 pr-10 text-[15px] text-[#1f1f28] outline-none";
   return (
-    <form action="/estoque" className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-[0_2px_14px_rgba(0,0,0,.1)] md:hidden">
+    <form action="/estoque" data-tour="site-busca-rapida" className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-[0_2px_14px_rgba(0,0,0,.1)] md:hidden">
       <label className="relative">
         <CarFront className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2" />
         <select name="tipo" defaultValue="" className={select} aria-label="Tipo de veículo">

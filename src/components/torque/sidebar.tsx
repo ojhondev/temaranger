@@ -12,6 +12,7 @@ import {
   Menu,
   MessagesSquare,
   Pin,
+  Sparkles,
   PinOff,
   Store,
   UserCog,
@@ -74,6 +75,7 @@ const MAIN: Item[] = [
   },
   { href: "/torque/equipe", label: "Equipe", icon: Users, managerOnly: true },
   { href: "/torque/clientes", label: "Clientes", icon: Building2, badge: "MASTER", masterOnly: true },
+  { href: "/torque/demonstracoes", label: "Demonstrações", icon: Sparkles, masterOnly: true },
 ];
 
 const KEY = "torque:menu-fixo";

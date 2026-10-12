@@ -53,11 +53,14 @@ export function PriceReference({ cfg, price, fipe, className }: { cfg: ResolvedS
   );
 
   const box = cn("block rounded-2xl border border-[#e2e2e8] bg-white p-5", className);
+  const tour = { "data-tour": "pdp-referencia" };
   return cfg.href ? (
-    <a href={cfg.href} target="_blank" rel="noopener noreferrer" className={cn(box, "transition hover:border-[#b9b9c4]")}>
+    <a {...tour} href={cfg.href} target="_blank" rel="noopener noreferrer" className={cn(box, "transition hover:border-[#b9b9c4]")}>
       {body}
     </a>
   ) : (
-    <div className={box}>{body}</div>
+    <div {...tour} className={box}>
+      {body}
+    </div>
   );
 }

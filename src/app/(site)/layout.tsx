@@ -1,6 +1,7 @@
 import type { Viewport } from "next";
 import { notFound } from "next/navigation";
 
+import { DemoExperience } from "@/components/ranger/demo-experience";
 import { Footer } from "@/components/ranger/footer";
 import { MobileTabBar } from "@/components/ranger/mobile-tab-bar";
 import { SitePopup } from "@/components/ranger/site-popup";
@@ -20,6 +21,7 @@ export async function generateMetadata() {
     manifest: "/manifest.webmanifest",
     icons: { icon: st.faviconUrl || "/app-icon?size=192", apple: st.faviconUrl || "/app-icon?size=192" },
     appleWebApp: { capable: true, title: t.name, statusBarStyle: "default" as const },
+    ...(t.sandbox ? { robots: { index: false, follow: false } } : {}),
   };
 }
 
@@ -41,6 +43,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Footer tenant={tenant} stores={stores} settings={st} />
       <MobileTabBar tenantName={tenant.name} whatsapp={tenant.whatsapp} settings={st} />
       <SitePopup popup={st.popup} whatsapp={tenant.whatsapp} />
+      {tenant.sandbox && (
+        <DemoExperience storeName={tenant.name} salesWhatsapp={process.env.SOFTMOTORS_WHATSAPP ?? null} />
+      )}
     </div>
   );
 }
