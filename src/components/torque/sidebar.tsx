@@ -9,6 +9,7 @@ import {
   CircleHelp,
   Globe,
   House,
+  Menu,
   MessagesSquare,
   Pin,
   PinOff,
@@ -28,7 +29,7 @@ type Item = {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
-  children?: { href: string; label: string }[];
+  children?: { href: string; label: string; managerOnly?: boolean }[];
   managerOnly?: boolean;
   masterOnly?: boolean;
 };
@@ -51,7 +52,7 @@ const MAIN: Item[] = [
     icon: CarFront,
     children: [
       { href: "/torque/estoque", label: "Veículos" },
-      { href: "/torque/estoque/novo", label: "Cadastrar veículo" },
+      { href: "/torque/estoque/novo", label: "Cadastrar veículo", managerOnly: true },
     ],
   },
   { href: "/torque/marketplaces", label: "Marketplaces", icon: Store, badge: "NOVO", managerOnly: true },
@@ -166,7 +167,7 @@ export function Sidebar({ isManager, isMaster = false }: { isManager: boolean; i
               </div>
               {showChildren && (
                 <div className="my-1 ml-[22px] flex flex-col border-l border-white/10 pl-3">
-                  {item.children!.map((c) => (
+                  {item.children!.filter((c) => isManager || !c.managerOnly).map((c) => (
                     <Link
                       key={c.href}
                       href={c.href}
@@ -210,21 +211,64 @@ export function Sidebar({ isManager, isMaster = false }: { isManager: boolean; i
   );
 }
 
-/** Menu do celular: barra inferior com os módulos principais. */
-export function MobileNav({ isManager }: { isManager: boolean }) {
+/** Menu do celular: 4 módulos na barra inferior e o resto em "Mais". */
+export function MobileNav({ isManager, isMaster = false }: { isManager: boolean; isMaster?: boolean }) {
   const pathname = usePathname();
-  const items = MAIN.filter((i) => (isManager || !i.managerOnly) && !i.masterOnly).slice(0, 5);
+  const { openHelp } = useTour();
+  const [more, setMore] = useState(false);
+  const all = MAIN.filter((i) => (isManager || !i.managerOnly) && (isMaster || !i.masterOnly));
+  const bar = all.slice(0, 4);
+  const rest = all.slice(4);
+  const isActive = (href: string) => (href === "/torque" ? pathname === href : pathname.startsWith(href));
+
+  useEffect(() => setMore(false), [pathname]);
+
+  const tab = "flex flex-1 flex-col items-center gap-0.5 px-1 text-[10px]";
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex justify-around border-t bg-[#2a2a33] py-1.5 md:hidden">
-      {items.map(({ href, label, icon: Icon }) => {
-        const active = href === "/torque" ? pathname === href : pathname.startsWith(href);
-        return (
-          <Link key={href} href={href} className={cn("flex flex-col items-center gap-0.5 px-2 text-[10px]", active ? "text-white" : "text-[#a9a9b4]")}>
-            <Icon className={cn("size-5", active && "text-primary")} />
+    <>
+      {more && <button type="button" aria-label="Fechar menu" onClick={() => setMore(false)} className="fixed inset-0 z-40 bg-black/40 md:hidden" />}
+      {more && (
+        <div className="fixed inset-x-0 bottom-[58px] z-50 max-h-[70dvh] overflow-y-auto rounded-t-2xl bg-[#2a2a33] p-3 text-[#d2d2da] md:hidden">
+          {rest.map((item) => (
+            <div key={item.href} className="border-b border-white/10 py-1 last:border-0">
+              <Link href={item.href} className={cn("flex h-11 items-center gap-3 px-2 text-sm", isActive(item.href) && "text-white")}>
+                <item.icon className={cn("size-5", isActive(item.href) && "text-primary")} />
+                <span className="flex-1">{item.label}</span>
+                {item.badge && <span className="rounded bg-[#6e3ff2] px-1.5 py-0.5 text-[9px] font-bold text-white">{item.badge}</span>}
+              </Link>
+              {item.children && (
+                <div className="flex flex-wrap gap-1.5 px-2 pb-2 pl-10">
+                  {item.children
+                    .filter((c) => isManager || !c.managerOnly)
+                    .map((c) => (
+                      <Link key={c.href} href={c.href} className={cn("rounded-full bg-white/[0.06] px-3 py-1.5 text-xs", pathname === c.href && "bg-primary text-white")}>
+                        {c.label}
+                      </Link>
+                    ))}
+                </div>
+              )}
+            </div>
+          ))}
+          <Link href="/torque/conta" className="flex h-11 items-center gap-3 px-2 text-sm">
+            <UserCog className="size-5" /> Conta
+          </Link>
+          <button type="button" onClick={() => (setMore(false), openHelp())} className="flex h-11 w-full items-center gap-3 px-2 text-sm">
+            <CircleHelp className="size-5" /> Central de ajuda
+          </button>
+        </div>
+      )}
+      <nav className="fixed inset-x-0 bottom-0 z-50 flex h-[58px] items-center border-t border-white/10 bg-[#2a2a33] md:hidden">
+        {bar.map(({ href, label, icon: Icon }) => (
+          <Link key={href} href={href} className={cn(tab, isActive(href) ? "text-white" : "text-[#a9a9b4]")}>
+            <Icon className={cn("size-5", isActive(href) && "text-primary")} />
             {label}
           </Link>
-        );
-      })}
-    </nav>
+        ))}
+        <button type="button" onClick={() => setMore((m) => !m)} aria-expanded={more} className={cn(tab, more ? "text-white" : "text-[#a9a9b4]")}>
+          <Menu className={cn("size-5", more && "text-primary")} />
+          Mais
+        </button>
+      </nav>
+    </>
   );
 }

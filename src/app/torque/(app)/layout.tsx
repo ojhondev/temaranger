@@ -61,7 +61,7 @@ export default async function TorqueLayout({ children }: { children: React.React
             <img src="/brand/softmotors-logo.png" alt="SoftMotors" className="h-4 w-auto opacity-80" />
           </footer>
         </div>
-        <MobileNav isManager={manager} />
+        <MobileNav isManager={manager} isMaster={session.role === "master"} />
       </TourProvider>
     </div>
   );
