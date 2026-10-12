@@ -73,6 +73,14 @@ Sem foto, o veículo aparece como ilustração SVG por carroceria (`src/componen
 - Dev server: preview `temaranger` (porta 3018, em `A:/Velo/.claude/launch.json`).
 - Banco: `npm run db:generate` / `db:migrate` / `db:seed` (tenant `demo` "SoftMotors",
   2 lojas em São Paulo, 27 veículos incluindo 2 motos).
+- **Dev e produção usam bancos separados** (mesmo servidor Neon): o `.env.local` aponta
+  para o banco `temaranger_dev`; a Vercel (produção) usa `neondb`. Testes locais nunca
+  aparecem no ar.
+  - **Nunca** rodar `vercel env pull` sem nome de arquivo: ele sobrescreve o `.env.local`
+    e o dev volta a gravar em produção. Use `npx vercel env pull .env.vercel`.
+  - Migration nova: rodar `npm run db:migrate` (dev) **e** em produção, trocando o banco
+    só no comando: `DATABASE_URL=<url com /neondb> npx drizzle-kit migrate`.
+  - O Blob de imagens continua o mesmo nos dois ambientes.
 - `npx tsc --noEmit` + `npx eslint src` + `npm run build` antes de commitar. Não rodar
   `next build` com o `next dev` ativo (corrompe `.next`).
 
