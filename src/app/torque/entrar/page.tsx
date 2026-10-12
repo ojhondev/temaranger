@@ -14,7 +14,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
   const { voltar } = await searchParams;
 
   return (
-    <main className="grid min-h-dvh lg:grid-cols-[1.1fr_1fr]" style={{ "--primary": "#4f6be6" } as React.CSSProperties}>
+    <main className="grid min-h-dvh lg:grid-cols-[1.1fr_1fr]" style={{ "--primary": "#ff3916" } as React.CSSProperties}>
       <section className="relative hidden overflow-hidden bg-[#2a2a33] p-14 text-white lg:flex lg:flex-col">
         <div className="flex items-center gap-3">
           <TorqueIcon className="size-10" />
@@ -35,7 +35,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<{
             const a = ((-210 + i * 24) * Math.PI) / 180;
             return <line key={i} x1={100 + 70 * Math.cos(a)} y1={100 + 70 * Math.sin(a)} x2={100 + 84 * Math.cos(a)} y2={100 + 84 * Math.sin(a)} stroke="#fff" strokeWidth="6" />;
           })}
-          <line x1="100" y1="100" x2="160" y2="52" stroke="#4f6be6" strokeWidth="8" strokeLinecap="round" />
+          <line x1="100" y1="100" x2="160" y2="52" stroke="#ff3916" strokeWidth="8" strokeLinecap="round" />
         </svg>
         <p className="mt-10 text-xs text-white/40">{tenant.name} · Plataforma SoftMotors</p>
       </section>

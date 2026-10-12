@@ -151,10 +151,10 @@ export function ConnectWizard({
                       key={o.v}
                       className={cn(
                         "flex cursor-pointer gap-3 rounded-xl border p-4",
-                        scope === o.v ? "border-primary bg-[#eef1fd]" : "border-[#e2e2e8]",
+                        scope === o.v ? "border-primary bg-[#fff0ec]" : "border-[#e2e2e8]",
                       )}
                     >
-                      <input type="radio" name="scope" checked={scope === o.v} onChange={() => setScope(o.v)} className="mt-1 accent-[#4f6be6]" />
+                      <input type="radio" name="scope" checked={scope === o.v} onChange={() => setScope(o.v)} className="mt-1 accent-[#ff3916]" />
                       <span>
                         <span className="block text-sm font-semibold">{o.t}</span>
                         <span className="text-xs text-[#6b6b76]">{o.d}</span>

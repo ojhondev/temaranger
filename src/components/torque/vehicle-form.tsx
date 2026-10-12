@@ -16,8 +16,8 @@ function Select({ name, value, options }: { name: string; value?: string | null;
 
 function Check({ name, label, checked, hint }: { name: string; label: string; checked?: boolean; hint?: string }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-[#e2e2e8] p-3 text-sm has-[:checked]:border-primary has-[:checked]:bg-[#eef1fd]">
-      <input type="checkbox" name={name} defaultChecked={checked} className="mt-0.5 size-4 accent-[#4f6be6]" />
+    <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-[#e2e2e8] p-3 text-sm has-[:checked]:border-primary has-[:checked]:bg-[#fff0ec]">
+      <input type="checkbox" name={name} defaultChecked={checked} className="mt-0.5 size-4 accent-[#ff3916]" />
       <span>
         <span className="font-medium">{label}</span>
         {hint && <span className="block text-xs text-[#6b6b76]">{hint}</span>}
@@ -106,7 +106,7 @@ export function VehicleForm({ vehicle: v, stores, tenantId }: { vehicle?: Vehicl
         <div className="grid gap-x-4 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {COMMON_OPTIONALS.map((o) => (
             <label key={o} className="flex items-center gap-2.5 text-sm">
-              <input type="checkbox" name="optionals" value={o} defaultChecked={v?.optionals.includes(o)} className="size-4 accent-[#4f6be6]" />
+              <input type="checkbox" name="optionals" value={o} defaultChecked={v?.optionals.includes(o)} className="size-4 accent-[#ff3916]" />
               {o}
             </label>
           ))}

@@ -92,7 +92,7 @@ async function main() {
       slug: "demo",
       name: "SoftMotors",
       logoUrl: "/brand/softmotors-logo.png",
-      primaryColor: "#4f6be6",
+      primaryColor: "#ff3916",
       whatsapp: "5511999990000",
     })
     .returning();

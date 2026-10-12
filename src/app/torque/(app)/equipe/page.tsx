@@ -104,7 +104,7 @@ export default async function Equipe({ searchParams }: { searchParams: Promise<{
                         <form action={toggleMember}>
                           <input type="hidden" name="id" value={u.id} />
                           <input type="hidden" name="active" value={u.active ? "0" : "1"} />
-                          <button className="h-9 rounded-lg px-3 text-sm font-medium text-primary hover:bg-[#eef1fd]">{u.active ? "Desativar" : "Reativar"}</button>
+                          <button className="h-9 rounded-lg px-3 text-sm font-medium text-primary hover:bg-[#fff0ec]">{u.active ? "Desativar" : "Reativar"}</button>
                         </form>
                       )}
                     </div>
